@@ -80,7 +80,7 @@
 - `The installation of this module means that you are willing to bear all consequences yourself.`
 - `Please judge whether to install it yourself!`
 
-## Update time: May 20, 2023, 13:14
+## Update time: May 23, 2023, 23:00
 
 # 中文
 
@@ -162,4 +162,4 @@
 - `模块刷入即代表愿意自行承担一切后果。`
 - `请自行判断是否安装刷入！`
 
-## 更新时间：2023.05.20 13:14
+## 更新时间：2023.05.23 23:00
