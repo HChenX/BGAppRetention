@@ -107,7 +107,7 @@ set_zram() {
   set_value 0 /sys/block/zram0/mem_limit
 
   #设置压缩线程
-  set_value 12 /sys/block/zram0/max_comp_streams
+  set_value 8 /sys/block/zram0/max_comp_streams
 
   echo "- [i]:正在设置压缩模式"
   echo "$comp_algorithm" >/sys/class/block/zram0/comp_algorithm

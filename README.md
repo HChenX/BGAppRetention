@@ -68,8 +68,10 @@
 ### Words from the Modified Author:
 
 - Thank you for your support. Without your support, the module would not have come this far. Thank you very much!
-- The code of this module may have borrowed from some other modules, so if there is any infringement, please contact me to remove it.
-- Since this module modifies a large number of system parameters, its stability and reliability may be poor. Please judge whether to install it yourself.
+- The code of this module may have borrowed from some other modules, so if there is any infringement, please contact me
+  to remove it.
+- Since this module modifies a large number of system parameters, its stability and reliability may be poor. Please
+  judge whether to install it yourself.
 
 ### Communication group:
 
