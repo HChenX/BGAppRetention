@@ -71,6 +71,10 @@
 - The code of this module may have borrowed from some other modules, so if there is any infringement, please contact me to remove it.
 - Since this module modifies a large number of system parameters, its stability and reliability may be poor. Please judge whether to install it yourself.
 
+### Communication group:
+
+-QQ group: 517788148
+
 ### Disclaimer:
 
 - `The installation of this module means that you are willing to bear all consequences yourself.`
@@ -78,7 +82,7 @@
 
 ## Update time: May 20, 2023, 13:14
 
-# 汉语
+# 中文
 
 # 保后台模块简介
 
@@ -148,6 +152,10 @@
 - 感谢各位的支持，没有你们的支持模块不可能走到现在，非常感谢！
 - 本模块代码可能借鉴了部分其他模块的代码，所有若有侵权请联系我删除。
 - 本模块由于修改了系统大量参数，稳定性和可靠性可能欠佳，请自行判断是否刷入。
+
+### 交流群:
+
+- QQ群:517788148
 
 ### 免责声明：
 
