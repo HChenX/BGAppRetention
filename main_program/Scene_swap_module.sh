@@ -63,7 +63,7 @@ set_value() {
 Update_overlay() {
   if sed -i "s/Name=\"$1\" Value=\".*\"/Name=\"$1\" Value=\"$2\"/" "$overlay_file" &&
     grep -q "<Prop Name=\"$1\" Value=\"$2\" />" "$overlay_file"; then
-    echo "$1=$2" >>"$MODPATH"/Qualcomm
+    echo "$1=$2" >>"$huanchen"/Qualcomm
   fi
 }
 
