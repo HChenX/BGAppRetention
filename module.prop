@@ -4,3 +4,4 @@ version=2023.05.24
 versionCode=20230524
 author=焕晨
 description=由`@嘟嘟ski`附加模块二改动而来，进行了大量修改，追求极限保后台！
+updateJson=https://raw.githubusercontent.com/HChenX/Background_retention/main/HChen.json
