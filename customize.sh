@@ -3,14 +3,12 @@ sdk=$(getprop ro.system.build.version.sdk)
 confs="/data/adb/modules/zram_huanchen"
 confs2="/data/adb/ksu/modules/zram_huanchen"
 swaps="$MODPATH/swap/swap.ini"
-origin_file="/system/vendor/etc/perf/perfconfigstore.xml"
-origin_folder="$MODPATH/system/vendor/etc/perf/"
-overlay_file="$MODPATH$origin_file"
 
 #延迟输出
 Output() {
   echo "$@"
-  sleep 0.07
+  #输出随机时间
+  sleep "$(echo "scale=3; $RANDOM/32768*0.15" | bc -l)"
 }
 
 #获取路径
@@ -36,14 +34,6 @@ comp_algorithms=$(Get_props comp_algorithm)
 close_kuaiba=$(Get_props close_kuaiba)
 reserve=$(Get_props reserve)
 
-#修改高通文件
-Update_overlay() {
-  if sed -i "s/Name=\"$1\" Value=\".*\"/Name=\"$1\" Value=\"$2\"/" "$overlay_file" &&
-    grep -q "<Prop Name=\"$1\" Value=\"$2\" />" "$overlay_file"; then
-    echo "$1=$2" >>"$MODPATH"/Qualcomm
-  fi
-}
-
 #删除已经安装的模块
 Delete_cheat() {
   #此代码用于让scene显示已激活
@@ -59,20 +49,19 @@ Delete_cheat() {
   rm -rf /data/adb/ksu/modules/swap_controller/
   rm -rf /data/adb/modules/swap_controller/
   rm -rf /data/adb/swap_controller/
-  Output "欢迎使用本模块(///ω///)"
-  Output "正在安装改版模块！< (ˉ^ˉ)> "
+  Output "- [i]:欢迎使用本模块(///ω///)"
+  Output "- [i]:正在安装改版模块！< (ˉ^ˉ)> "
   Output "--------------------------------------------"
   Output "--------------------------------------------"
-  echo -en "\n"
 }
 
 #安装附加模块
 Dont_kill() {
   if [[ "$sdk" -ge 31 ]]; then
-    Output "(安卓12/13专属)Don.t.kill模块已安装。"
-    Output "模块作用：进一步增强保后台能力。"
-    Output "使用方法：lsp里面激活重启即可。"
-    Output "模块作者：海浪逃向岛屿"
+    Output "- [i]:(安卓12/13专属)Don.t.kill模块已安装。"
+    Output "- [i]:模块作用：进一步增强保后台能力。"
+    Output "- [i]:使用方法：lsp里面激活重启即可。"
+    Output "- [i]:模块作者：海浪逃向岛屿"
     unzip -o "$ZIPFILE" 'Don.t.Kill.apk' -d /data/local/tmp/ &>/dev/null
     pm install -r /data/local/tmp/Don.t.Kill.apk &>/dev/null
     rm -rf /data/local/tmp/Don.t.Kill.apk
@@ -81,8 +70,7 @@ Dont_kill() {
 #用于标记是否安装附加模块
 dont_kill=on" >>"$swaps"
   else
-    echo -en "\n"
-    Output "非安卓12/13跳过附加模块安装。"
+    Output "- [!]:非安卓12/13跳过附加模块安装。"
     rm -rf /data/local/tmp/Don.t.Kill.apk
     rm -rf "$MODPATH"/Don.t.Kill.apk
   fi
@@ -96,16 +84,14 @@ Close_kuaiba() {
     kuaibaapp2="${kuaibaapp//DuraSpeed.apk/}"
     mkdir -p "$MODPATH""$kuaibaapp2"
     touch "$MODPATH""$kuaibaapp"
-    echo -en "\n"
-    Output "成功处理MTK快霸。"
+    Output "- [i]:成功处理MTK快霸。"
     echo "
 #用于标记是否关闭快霸
 close_kuaiba=on" >>"$swaps"
   else
     if [[ $(getprop Build.BRAND) == "MTK" ]] && [[ $packages == "com.mediatek.duraspeed" ]]; then
-      echo -en "\n"
-      Output "(联发科专属)下面决定是否关闭联发科的快霸。"
-      Output "作用：防止这玩意杀后台，似乎是残留的东西。"
+      Output "- [i]:(联发科专属)下面决定是否关闭联发科的快霸。"
+      Output "- [i]:作用：防止这玩意杀后台，似乎是残留的东西。"
       #第一层保险
       pm disable com.mediatek.duraspeed &>/dev/null
       pm disable com.mediatek.duraspeed/com.mediatek.duraspeed.DuraSpeedAppReceiver &>/dev/null
@@ -117,13 +103,12 @@ close_kuaiba=on" >>"$swaps"
       kuaibaapp2="${kuaibaapp//DuraSpeed.apk/}"
       mkdir -p "$MODPATH""$kuaibaapp2"
       touch "$MODPATH""$kuaibaapp"
-      Output "成功处理MTK快霸。"
+      Output "- [i]:成功处理MTK快霸。"
       echo "
 #用于标记是否关闭快霸
 close_kuaiba=on" >>"$swaps"
     else
-      echo -en "\n"
-      echo "不是联发科或不存在快霸软件跳过此步。"
+      echo "- [!]:不是联发科或不存在快霸软件跳过此步。"
     fi
   fi
 }
@@ -134,16 +119,15 @@ Athena_close() {
   ui2=$(getprop ro.product.vendor.manufacturer | tr '[:upper:]' '[:lower:]')
   if [[ "$ui1" == "realmeui" ]] || [[ "$ui1" == "coloros" ]] || [[ "$ui2" == "oneplus" ]] ||
     [[ "$ui2" == "realme" ]] || [[ "$ui2" == "oppo" ]] || [[ "$ui2" == "coloros" ]]; then
+    Output "- [i]:(oppo系专属)正在关闭雅典娜。"
+    Output "- [i]:作用：防止这玩意杀后台。"
+    Output "- [i]:如果音量键无法使用；"
+    Output "- [i]:请随意滑动屏幕即可自动跳过。"
+    Output "- [i]:无事请勿随意滑动屏幕，可能误触！"
     echo -en "\n"
-    Output "(oppo系专属)正在关闭雅典娜。"
-    Output "作用：防止这玩意杀后台。"
-    Output "音量键无法使用的话"
-    Output "请随意滑动屏幕即可自动跳过。"
-    Output "无事请勿随意滑动屏幕，可能误触。"
-    echo -en "\n"
-    Output "按音量上➕键确认关闭雅典娜。"
+    Output "- [i]:按音量上➕键确认关闭雅典娜。"
     Output " "
-    Output "按音量下➖键取消关闭雅典娜。"
+    Output "- [i]:按音量下➖键取消关闭雅典娜。"
     echo -en "\n"
     timeout=0
     while :; do
@@ -151,7 +135,7 @@ Athena_close() {
       #超时自动退出
       timeout=$((timeout + 1))
       if [[ $timeout -gt 2 ]]; then
-        Output "超时未检测到音量键，请重试。"
+        Output "- [!]:超时未检测到音量键，请重试！"
         echo "
 #这些标记仅用于为开发者提供信息，自行修改没有效果
 #---------------------------------------------------------------------------" >>"$swaps"
@@ -178,7 +162,7 @@ Athena_close() {
           mkdir -p "$MODPATH""$Athena_13"
           touch "$MODPATH""$Athena_such_13"
         fi
-        Output "成功关闭雅典娜。"
+        Output "- [i]:成功关闭雅典娜。"
         echo "
 #用于标记是否关闭雅典娜
 close_athena=on
@@ -186,7 +170,7 @@ close_athena=on
 #---------------------------------------------------------------------------" >>"$swaps"
         ;;
       KEY_VOLUMEDOWN)
-        Output "取消关闭雅典娜。"
+        Output "- [!]:取消关闭雅典娜。"
         echo "
 #用于标记是否关闭雅典娜
 close_athena=off
@@ -198,76 +182,17 @@ close_athena=off
       break
     done
   else
-    echo -en "\n"
-    Output "不是oppo系跳过此步。"
+    Output "- [!]:不是oppo系跳过此步。"
     echo "
 #这些标记仅用于为开发者提供信息，自行修改没有效果
 #---------------------------------------------------------------------------" >>"$swaps"
   fi
 }
 
-#高通专用修改
-Qualcomms() {
-  [[ -f $origin_file ]] && mkdir -p "$origin_folder" && cp -f "$origin_file" "$origin_folder"
-  if [[ "$(getprop ro.hardware)" == "qcom" ]]; then
-    if [[ -f $overlay_file ]]; then
-      echo -en "\n"
-      Output "正在执行高通专改！"
-      touch "$MODPATH"/Qualcomm
-      Update_overlay vendor.iop.enable_uxe 1
-      Update_overlay vendor.debug.enable.lm false
-      Update_overlay vendor.perf.iop_v3.enable true
-      Update_overlay vendor.enable.prefetch true
-      Update_overlay vendor.iop.enable_prefetch_ofr true
-      Update_overlay vendor.iop.enable_speed true
-      Update_overlay ro.vendor.qti.sys.fw.bservice_age 900000
-      Update_overlay ro.vendor.qti.sys.fw.bservice_limit 114514
-      Update_overlay ro.vendor.perf.enable.prekill false
-      Update_overlay vendor.prekill_MIN_ADJ_to_Kill 1001
-      Update_overlay vendor.prekill_MAX_ADJ_to_Kill 1001
-      Update_overlay vendor.debug.enable.memperfd false
-      Update_overlay ro.lmk.thrashing_limit_pct_dup 100
-      Update_overlay ro.lmk.kill_heaviest_task_dup false
-      Update_overlay ro.lmk.kill_timeout_ms_dup 500
-      Update_overlay ro.lmk.thrashing_threshold 100
-      Update_overlay ro.lmk.thrashing_decay 10
-      Update_overlay ro.lmk.nstrat_low_swap 0
-      Update_overlay ro.lmk.nstrat_psi_partial_ms 600
-      Update_overlay ro.lmk.nstrat_psi_complete_ms 900
-      Update_overlay ro.lmk.nstrat_psi_scrit_complete_stall_ms 1000
-      Update_overlay ro.lmk.nstrat_wmark_boost_factor 0
-      Update_overlay ro.lmk.enhance_batch_kill false
-      Update_overlay ro.lmk.enable_watermark_check false
-      Update_overlay ro.lmk.enable_preferred_apps false
-      Update_overlay vendor.appcompact.enable_app_compact false
-      Update_overlay ro.vendor.qti.sys.fw.bg_apps_limit 114514
-      Update_overlay ro.vendor.qti.sys.fw.empty_app_percent 0
-      Update_overlay ro.lmk.enable_userspace_lmk false
-      Update_overlay vendor.perf.phr.enable 0
-      Update_overlay ro.vendor.iocgrp.config 1
-      Update_overlay ro.lmk.super_critical 1001
-      Update_overlay ro.lmk.direct_reclaim_pressure 100
-      Update_overlay ro.lmk.reclaim_scan_threshold 1024
-      Update_overlay ro.vendor.qti.am.reschedule_service false
-    #Update_overlay ro.vendor.qti.sys.fw.bservice_enable false
-    #Update_overlay ro.vendor.qti.config.zram false
-    #Update_overlay ro.vendor.qti.config.swap false
-    else
-      echo -en "\n"
-      Output "不存在文件无法执行！"
-      Output "反馈码：qcom"
-    fi
-  else
-    echo -en "\n"
-    Output "不是高通跳过修改！"
-  fi
-}
-
 #检测支持的压缩模式
 #自动配置watermark_scale_factor
 Other_mode() {
-  echo -en "\n"
-  Output "正在检测可用压缩模式！"
+  Output "- [i]:正在检测可用压缩模式！"
   if [[ $reserve == "true" ]]; then
     comp_algorithm=$comp_algorithms
   else
@@ -287,15 +212,14 @@ Other_mode() {
     fi
   fi
   sed -i '12a '"comp_algorithm=$comp_algorithm"'' "$swaps"
-  Output "设置zram压缩模式为：$comp_algorithm"
+  Output "- [i]:设置zram压缩模式为：$comp_algorithm"
 
   [[ -f $iconf/Prop_on ]] && {
     [[ $(cat $iconf/Prop_on) != 0 ]] && {
       cp -f $iconf/system.prop "$MODPATH"
       # 填写0触发prop更新
       echo -n "0" >"$MODPATH"/Prop_on
-      echo -en "\n"
-      Output "成功获取历史文件。"
+      Output "- [i]:成功获取历史文件。"
     }
   }
   #删除已有文件
@@ -312,13 +236,11 @@ Delete_cheat
 Dont_kill
 Close_kuaiba
 Athena_close
-Qualcomms
 Other_mode
 Other_settings
 
-echo -en "\n"
-Output "即将完成，更新内容请看群公告！"
-Output "特别感谢帮我debug的群友！ "
-Output "交流群：517788148"
-Output "作者：@焕晨"
-Output "安装完成。"
+Output "- [i]:即将完成，更新内容请看群公告！"
+Output "- [i]:特别感谢帮我debug的群友！ "
+Output "- [i]:交流群：517788148"
+Output "- [i]:作者：@焕晨"
+Output "- [i]:安装完成！"

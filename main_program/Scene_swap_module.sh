@@ -2,6 +2,9 @@
 huanchen=${0%/*}
 huanchen=${huanchen//\/main_program/}
 sdk=$(getprop ro.system.build.version.sdk)
+origin_file="/system/vendor/etc/perf/perfconfigstore.xml"
+origin_folder="$huanchen/system/vendor/etc/perf/"
+overlay_file="$huanchen$origin_file"
 
 #设置变量
 if [[ -f /system/bin/swapon ]]; then
@@ -56,6 +59,14 @@ set_value() {
   fi
 }
 
+#修改高通文件
+Update_overlay() {
+  if sed -i "s/Name=\"$1\" Value=\".*\"/Name=\"$1\" Value=\"$2\"/" "$overlay_file" &&
+    grep -q "<Prop Name=\"$1\" Value=\"$2\" />" "$overlay_file"; then
+    echo "$1=$2" >>"$MODPATH"/Qualcomm
+  fi
+}
+
 # 解析配置
 echo "---------------------------------------------------------------------------"
 
@@ -80,8 +91,10 @@ set_zram() {
     zram_size_in=11
   elif [[ $zram_size_out -gt 5000000 ]]; then
     zram_size_in=9
-  else
+  elif [[ $zram_size_out -gt 3000000 ]]; then
     zram_size_in=7
+  else
+    zram_size_in=5
   fi
 
   #换算大小
@@ -161,8 +174,10 @@ set_vm_params() {
     watermark_scale_factor=400
   elif [[ $zram_size_out -gt 5000000 ]]; then
     watermark_scale_factor=350
-  else
+  elif [[ $zram_size_out -gt 3000000 ]]; then
     watermark_scale_factor=300
+  else
+    watermark_scale_factor=250
   fi
 
   echo "- [i]:正在设置watermark_scale_factor"
@@ -254,6 +269,60 @@ other_setting() {
       echo "- [i]:成功优化相机杀后台问题"
     fi
   }
+
+  #高通专用修改
+  if [[ ! -f $overlay_file ]]; then
+    [[ "$(getprop ro.hardware)" == "qcom" ]] && {
+      [[ -f $origin_file ]] && mkdir -p "$origin_folder" && cp -f "$origin_file" "$origin_folder"
+      [[ -f $overlay_file ]] && {
+        touch "$huanchen"/Qualcomm
+        Update_overlay vendor.iop.enable_uxe 1
+        Update_overlay vendor.debug.enable.lm false
+        Update_overlay vendor.perf.iop_v3.enable true
+        Update_overlay vendor.enable.prefetch true
+        Update_overlay vendor.iop.enable_prefetch_ofr true
+        Update_overlay vendor.iop.enable_speed true
+        Update_overlay ro.vendor.qti.sys.fw.bservice_age 900000
+        Update_overlay ro.vendor.qti.sys.fw.bservice_limit 114514
+        Update_overlay ro.vendor.perf.enable.prekill false
+        Update_overlay vendor.prekill_MIN_ADJ_to_Kill 1001
+        Update_overlay vendor.prekill_MAX_ADJ_to_Kill 1001
+        Update_overlay vendor.debug.enable.memperfd false
+        Update_overlay ro.lmk.thrashing_limit_pct_dup 100
+        Update_overlay ro.lmk.kill_heaviest_task_dup false
+        Update_overlay ro.lmk.kill_timeout_ms_dup 500
+        Update_overlay ro.lmk.thrashing_threshold 100
+        Update_overlay ro.lmk.thrashing_decay 10
+        Update_overlay ro.lmk.nstrat_low_swap 0
+        Update_overlay ro.lmk.nstrat_psi_partial_ms 600
+        Update_overlay ro.lmk.nstrat_psi_complete_ms 900
+        Update_overlay ro.lmk.nstrat_psi_scrit_complete_stall_ms 1000
+        Update_overlay ro.lmk.nstrat_wmark_boost_factor 0
+        Update_overlay ro.lmk.enhance_batch_kill false
+        Update_overlay ro.lmk.enable_watermark_check false
+        Update_overlay ro.lmk.enable_preferred_apps false
+        Update_overlay vendor.appcompact.enable_app_compact false
+        Update_overlay ro.vendor.qti.sys.fw.bg_apps_limit 114514
+        Update_overlay ro.vendor.qti.sys.fw.empty_app_percent 0
+        Update_overlay ro.lmk.enable_userspace_lmk false
+        Update_overlay vendor.perf.phr.enable 0
+        Update_overlay ro.vendor.iocgrp.config 1
+        Update_overlay ro.lmk.super_critical 1001
+        Update_overlay ro.lmk.direct_reclaim_pressure 100
+        Update_overlay ro.lmk.reclaim_scan_threshold 1024
+        Update_overlay ro.vendor.qti.am.reschedule_service false
+        #Update_overlay ro.vendor.qti.sys.fw.bservice_enable false
+        #Update_overlay ro.vendor.qti.config.zram false
+        #Update_overlay ro.vendor.qti.config.swap false
+        echo "- [i]:成功执行高通专改"
+        echo "- [!]:为了完全生效请再重启一次"
+      }
+    }
+  else
+    [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
+      echo "- [i]:成功执行高通专改"
+    }
+  fi
 }
 
 #prop设置
