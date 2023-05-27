@@ -15,16 +15,15 @@ overlay_file="$huanchen$origin_file"
     alias settings="/system/bin/settings"
     alias device_config="/system/bin/device_config"
   }
-} ||
-  {
-    [[ -f /vendor/bin/swapon ]] && {
-      alias swapon="/vendor/bin/swapon"
-      alias swapoff="/vendor/bin/swapoff"
-      alias mkswap="/vendor/bin/mkswap"
-      alias settings="/vendor/bin/settings"
-      alias device_config="/vendor/bin/device_config"
-    }
+} || {
+  [[ -f /vendor/bin/swapon ]] && {
+    alias swapon="/vendor/bin/swapon"
+    alias swapoff="/vendor/bin/swapoff"
+    alias mkswap="/vendor/bin/mkswap"
+    alias settings="/vendor/bin/settings"
+    alias device_config="/vendor/bin/device_config"
   }
+}
 
 #获取物理运存大小
 zram_size_out=$(grep 'MemTotal' </proc/meminfo | tr -cd "0-9")
@@ -32,11 +31,11 @@ zram_size_out=$(grep 'MemTotal' </proc/meminfo | tr -cd "0-9")
 #读取配置文件内容
 swap_conf="$huanchen/swap/swap.ini"
 {
-  [[ -f $swap_conf ]] &&
-    {
-      . "$swap_conf" &&
-        echo "- [i]: 配置文件读取成功"
-    } || {
+  [[ -f $swap_conf ]] && {
+    . "$swap_conf" && {
+      echo "- [i]: 配置文件读取成功"
+    }
+  } || {
     echo "- [!]: 配置文件读取异常" && exit 1
   }
 } || {
@@ -48,8 +47,9 @@ set_value_log() {
   echo "- [i]:设置$2"
   now=$(cat "$2")
   {
-    [[ $1 == "$now" ]] &&
+    [[ $1 == "$now" ]] && {
       echo "- [i]:目标设置为:$1,实际设置为:$now"
+    }
   } || {
     echo "- [!]:目标设置为:$1,实际设置为:$now"
   }
@@ -72,8 +72,9 @@ set_value() {
 #修改高通文件
 Update_overlay() {
   {
-    sed -i "s/Name=\"$1\" Value=\".*\"/Name=\"$1\" Value=\"$2\"/" "$overlay_file" &&
+    sed -i "s/Name=\"$1\" Value=\".*\"/Name=\"$1\" Value=\"$2\"/" "$overlay_file" && {
       grep -q "<Prop Name=\"$1\" Value=\"$2\" />" "$overlay_file"
+    }
   } && {
     echo "$1=$2" >>"$huanchen"/Qualcomm
   }
@@ -98,20 +99,25 @@ set_zram() {
   #请根据你手机物理内存大小更改
   #直接更改前面的”15“”11“等就行
   {
-    [[ $zram_size_out -gt 15000000 ]] &&
+    [[ $zram_size_out -gt 15000000 ]] && {
       zram_size_in=19
+    }
   } || {
-    [[ $zram_size_out -gt 11000000 ]] &&
+    [[ $zram_size_out -gt 11000000 ]] && {
       zram_size_in=15
+    }
   } || {
-    [[ $zram_size_out -gt 7000000 ]] &&
+    [[ $zram_size_out -gt 7000000 ]] && {
       zram_size_in=11
+    }
   } || {
-    [[ $zram_size_out -gt 5000000 ]] &&
+    [[ $zram_size_out -gt 5000000 ]] && {
       zram_size_in=9
+    }
   } || {
-    [[ $zram_size_out -gt 3000000 ]] &&
+    [[ $zram_size_out -gt 3000000 ]] && {
       zram_size_in=7
+    }
   } || {
     zram_size_in=5
   }
@@ -169,8 +175,9 @@ set_vm_params() {
   swappinessd="/proc/sys/vm/swappiness"
   echo "160" >$swappinessd
   {
-    [[ $? -eq 1 ]] &&
+    [[ $? -eq 1 ]] && {
       swappiness=95
+    }
   } || {
     swappiness=160
   }
@@ -188,20 +195,25 @@ set_vm_params() {
 
   #设置watermark_scale_factor
   {
-    [[ $zram_size_out -gt 15000000 ]] &&
+    [[ $zram_size_out -gt 15000000 ]] && {
       watermark_scale_factor=500
+    }
   } || {
-    [[ $zram_size_out -gt 11000000 ]] &&
+    [[ $zram_size_out -gt 11000000 ]] && {
       watermark_scale_factor=450
+    }
   } || {
-    [[ $zram_size_out -gt 7000000 ]] &&
+    [[ $zram_size_out -gt 7000000 ]] && {
       watermark_scale_factor=400
+    }
   } || {
-    [[ $zram_size_out -gt 5000000 ]] &&
+    [[ $zram_size_out -gt 5000000 ]] && {
       watermark_scale_factor=350
+    }
   } || {
-    [[ $zram_size_out -gt 3000000 ]] &&
+    [[ $zram_size_out -gt 3000000 ]] && {
       watermark_scale_factor=300
+    }
   } || {
     watermark_scale_factor=250
   }
@@ -250,8 +262,9 @@ set_vm_params() {
     set_value 0 /sys/kernel/mi_reclaim/enable
     # 每次换入的内存页
     {
-      [[ $comp_algorithm == "zstd" ]] &&
+      [[ $comp_algorithm == "zstd" ]] && {
         set_value 0 /proc/sys/vm/page-cluster
+      }
     } || {
       set_value 1 /proc/sys/vm/page-cluster
     }
@@ -509,10 +522,11 @@ on_prop_pool() {
   echo "- [i]:修改prop设置完毕"
 
   #显示对高通的修改
-  [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] &&
+  [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
     [[ "$(getprop ro.hardware)" == "qcom" ]] && [[ -f "$huanchen"/Qualcomm ]] && {
-    echo "- [i]:读取高通专改内容"
-    cat "$huanchen"/Qualcomm
+      echo "- [i]:读取高通专改内容"
+      cat "$huanchen"/Qualcomm
+    }
   }
 }
 

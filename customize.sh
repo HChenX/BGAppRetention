@@ -206,8 +206,9 @@ close_athena=off
 Other_mode() {
   Output "- [i]:正在检测可用压缩模式！"
   {
-    [[ $reserve == "true" ]] &&
+    [[ $reserve == "true" ]] && {
       comp_algorithm=$comp_algorithms
+    }
   } || {
     check_result=$(cat /sys/block/zram0/comp_algorithm)
     zram=$(echo "$check_result" | sed 's/\[//g' | sed 's/]//g' | sed 's/ /\n/g')
@@ -215,14 +216,17 @@ Other_mode() {
     check_result2=$(echo "$zram" | grep zstd)
     check_result3=$(echo "$zram" | grep lzo-rle)
     {
-      [[ "$check_result1" != "" ]] &&
+      [[ "$check_result1" != "" ]] && {
         comp_algorithm=lz4
+      }
     } || {
-      [[ "$check_result2" != "" ]] &&
+      [[ "$check_result2" != "" ]] && {
         comp_algorithm=zstd
+      }
     } || {
-      [[ "$check_result3" != "" ]] &&
+      [[ "$check_result3" != "" ]] && {
         comp_algorithm=lzo-rle
+      }
     } || {
       comp_algorithm=lzo
     }
@@ -239,7 +243,7 @@ Other_mode() {
     }
   }
   #删除已有文件
-  rm -rf "$iconf"/system.prop
+  #  rm -rf "$iconf"/system.prop
 }
 
 #默认权限
