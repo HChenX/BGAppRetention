@@ -54,21 +54,23 @@ magiskpolicy --live "allow system_server * * *"
 
 #主代码开始运行
 #解除安卓进程限制
-if [[ "$sdk" -ge 29 ]]; then
-  device_config set_sync_disabled_for_tests persistent
-  settings put global settings_enable_monitor_phantom_procs false
-  device_config put activity_manager max_cached_processes 2147483647
-  device_config put activity_manager max_phantom_processes 2147483647
-  settings put global activity_manager_constants max_cached_processes 2147483647
-  settings put global activity_manager_constants max_phantom_processes 2147483647
-  echo "- [i]: 解除进程限制成功" >>"$Log"
-else
+{
+  [[ "$sdk" -ge 29 ]] && {
+    device_config set_sync_disabled_for_tests persistent
+    settings put global settings_enable_monitor_phantom_procs false
+    device_config put activity_manager max_cached_processes 2147483647
+    device_config put activity_manager max_phantom_processes 2147483647
+    settings put global activity_manager_constants max_cached_processes 2147483647
+    settings put global activity_manager_constants max_phantom_processes 2147483647
+    echo "- [i]: 解除进程限制成功" >>"$Log"
+  }
+} || {
   [[ "$sdk" -ge 26 ]] && {
     android_9=$(settings get global activity_manager_constants | sed 's/$/,max_cached_processes=2147483647/')
     settings put global activity_manager_constants "$android_9"
     echo "- [i]: 解除进程限制成功" >>"$Log"
   }
-fi
+}
 
 #开始运行主程序
 {

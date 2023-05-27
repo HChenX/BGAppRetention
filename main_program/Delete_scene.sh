@@ -24,14 +24,22 @@ Log() {
 }
 
 #进行判断
-if [[ -d "/data/adb/modules/scene_swap_controller/" ]] ||
-  [[ -d "/data/adb/ksu/modules/scene_swap_controller/" ]]; then
-  Deletes
-  Log
-  Pids
-elif [[ -d "/data/adb/modules/swap_controller/" ]] ||
-  [[ -d "/data/adb/ksu/modules/swap_controller/" ]]; then
-  Deletes
-  Log
-  Pids
-fi
+{
+  {
+    [[ -d "/data/adb/modules/scene_swap_controller/" ]] ||
+      [[ -d "/data/adb/ksu/modules/scene_swap_controller/" ]]
+  } && {
+    Deletes
+    Log
+    Pids
+  }
+} || {
+  {
+    [[ -d "/data/adb/modules/swap_controller/" ]] ||
+      [[ -d "/data/adb/ksu/modules/swap_controller/" ]]
+  } && {
+    Deletes
+    Log
+    Pids
+  }
+}

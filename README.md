@@ -19,7 +19,7 @@
 
 ### Update Log:
 
-#### The latest version is: Background_retention38
+#### The latest version is: Background_retention39
 
 - Added cloud updates via Github.
 - Fixed error codes and improved optimization codes.
@@ -89,7 +89,7 @@
 
 > Please judge whether to install it yourself!
 
-## Update time: May 24, 2023, 15:00
+## Update time: May 28, 2023, 12:00
 
 # 中文
 
@@ -110,7 +110,7 @@
 
 ### 更新日志:
 
-#### 最新版本为:保后台38
+#### 最新版本为:保后台39
 
 - 加入Github云更新。
 - 修正错误代码，完善优化代码。
@@ -178,4 +178,4 @@
 
 > 请自行判断是否安装刷入！
 
-## 更新时间:2023.05.24 15:00
+## 更新时间:2023.05.28 12:00

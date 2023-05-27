@@ -7,64 +7,76 @@ origin_folder="$huanchen/system/vendor/etc/perf/"
 overlay_file="$huanchen$origin_file"
 
 #设置变量
-if [[ -f /system/bin/swapon ]]; then
-  alias swapon="/system/bin/swapon"
-  alias swapoff="/system/bin/swapoff"
-  alias mkswap="/system/bin/mkswap"
-  alias settings="/system/bin/settings"
-  alias device_config="/system/bin/device_config"
-elif [[ -f /vendor/bin/swapon ]]; then
-  alias swapon="/vendor/bin/swapon"
-  alias swapoff="/vendor/bin/swapoff"
-  alias mkswap="/vendor/bin/mkswap"
-  alias settings="/vendor/bin/settings"
-  alias device_config="/vendor/bin/device_config"
-fi
+{
+  [[ -f /system/bin/swapon ]] && {
+    alias swapon="/system/bin/swapon"
+    alias swapoff="/system/bin/swapoff"
+    alias mkswap="/system/bin/mkswap"
+    alias settings="/system/bin/settings"
+    alias device_config="/system/bin/device_config"
+  }
+} ||
+  {
+    [[ -f /vendor/bin/swapon ]] && {
+      alias swapon="/vendor/bin/swapon"
+      alias swapoff="/vendor/bin/swapoff"
+      alias mkswap="/vendor/bin/mkswap"
+      alias settings="/vendor/bin/settings"
+      alias device_config="/vendor/bin/device_config"
+    }
+  }
 
 #获取物理运存大小
 zram_size_out=$(grep 'MemTotal' </proc/meminfo | tr -cd "0-9")
 
 #读取配置文件内容
 swap_conf="$huanchen/swap/swap.ini"
-if [[ -f $swap_conf ]]; then
-  if . "$swap_conf"; then
-    echo "- [i]: 配置文件读取成功"
-  else
+{
+  [[ -f $swap_conf ]] &&
+    {
+      . "$swap_conf" &&
+        echo "- [i]: 配置文件读取成功"
+    } || {
     echo "- [!]: 配置文件读取异常" && exit 1
-  fi
-else
+  }
+} || {
   echo "- [!]: 缺少$swap_conf" && exit 2
-fi
+}
 
 #显示log
 set_value_log() {
   echo "- [i]:设置$2"
   now=$(cat "$2")
-  if [[ $1 == "$now" ]]; then
-    echo "- [i]:目标设置为:$1,实际设置为:$now"
-  else
+  {
+    [[ $1 == "$now" ]] &&
+      echo "- [i]:目标设置为:$1,实际设置为:$now"
+  } || {
     echo "- [!]:目标设置为:$1,实际设置为:$now"
-  fi
+  }
 }
 
 #设置参数
 set_value() {
-  if [[ -f "$2" ]]; then
-    chmod 666 "$2" &>/dev/null
-    echo "$1" >"$2"
-    chmod 664 "$2" &>/dev/null
-    set_value_log "$1" "$2"
-  else
+  {
+    [[ -f "$2" ]] && {
+      chmod 666 "$2" &>/dev/null
+      echo "$1" >"$2"
+      chmod 664 "$2" &>/dev/null
+      set_value_log "$1" "$2"
+    }
+  } || {
     echo "- [!]: 不存在$2文件"
-  fi
+  }
 }
 
 #修改高通文件
 Update_overlay() {
-  if sed -i "s/Name=\"$1\" Value=\".*\"/Name=\"$1\" Value=\"$2\"/" "$overlay_file" &&
-    grep -q "<Prop Name=\"$1\" Value=\"$2\" />" "$overlay_file"; then
+  {
+    sed -i "s/Name=\"$1\" Value=\".*\"/Name=\"$1\" Value=\"$2\"/" "$overlay_file" &&
+      grep -q "<Prop Name=\"$1\" Value=\"$2\" />" "$overlay_file"
+  } && {
     echo "$1=$2" >>"$huanchen"/Qualcomm
-  fi
+  }
 }
 
 # 解析配置
@@ -73,34 +85,41 @@ echo "--------------------------------------------------------------------------
 #设置zram
 set_zram() {
   [[ ! -e /dev/block/zram0 ]] && {
-    if [[ -e /sys/class/zram-control ]]; then
-      echo "- [i]:内核支持ZRAM"
-    else
+    {
+      [[ -e /sys/class/zram-control ]] && {
+        echo "- [i]:内核支持ZRAM"
+      }
+    } || {
       echo "- [!]:内核不支持ZRAM"
       return
-    fi
+    }
   }
 
   #请根据你手机物理内存大小更改
   #直接更改前面的”15“”11“等就行
-  if [[ $zram_size_out -gt 15000000 ]]; then
-    zram_size_in=19
-  elif [[ $zram_size_out -gt 11000000 ]]; then
-    zram_size_in=15
-  elif [[ $zram_size_out -gt 7000000 ]]; then
-    zram_size_in=11
-  elif [[ $zram_size_out -gt 5000000 ]]; then
-    zram_size_in=9
-  elif [[ $zram_size_out -gt 3000000 ]]; then
-    zram_size_in=7
-  else
+  {
+    [[ $zram_size_out -gt 15000000 ]] &&
+      zram_size_in=19
+  } || {
+    [[ $zram_size_out -gt 11000000 ]] &&
+      zram_size_in=15
+  } || {
+    [[ $zram_size_out -gt 7000000 ]] &&
+      zram_size_in=11
+  } || {
+    [[ $zram_size_out -gt 5000000 ]] &&
+      zram_size_in=9
+  } || {
+    [[ $zram_size_out -gt 3000000 ]] &&
+      zram_size_in=7
+  } || {
     zram_size_in=5
-  fi
+  }
 
   #换算大小
   zram_size=$(awk 'BEGIN{print '$zram_size_in'*(1024^3)}')
-  echo "- [i]:重置ZRAM所有设置"
 
+  echo "- [i]:重置ZRAM所有设置"
   #关闭所有zram
   for z in /dev/block/zram*; do
     swapoff "$z" &>/dev/null
@@ -145,14 +164,16 @@ set_zram() {
 #设置vm参数
 set_vm_params() {
   echo "---------------------------------------------------------------------------"
+
   #设置swappiness
   swappinessd="/proc/sys/vm/swappiness"
   echo "160" >$swappinessd
-  if [[ $? -eq 1 ]]; then
-    swappiness=95
-  else
+  {
+    [[ $? -eq 1 ]] &&
+      swappiness=95
+  } || {
     swappiness=160
-  fi
+  }
 
   echo "- [i]:正在设置swappiness"
   echo "$swappiness" >$swappinessd
@@ -166,19 +187,24 @@ set_vm_params() {
   set_value "$swappiness" /sys/fs/cgroup/memory/memory.swappiness
 
   #设置watermark_scale_factor
-  if [[ $zram_size_out -gt 15000000 ]]; then
-    watermark_scale_factor=500
-  elif [[ $zram_size_out -gt 11000000 ]]; then
-    watermark_scale_factor=450
-  elif [[ $zram_size_out -gt 7000000 ]]; then
-    watermark_scale_factor=400
-  elif [[ $zram_size_out -gt 5000000 ]]; then
-    watermark_scale_factor=350
-  elif [[ $zram_size_out -gt 3000000 ]]; then
-    watermark_scale_factor=300
-  else
+  {
+    [[ $zram_size_out -gt 15000000 ]] &&
+      watermark_scale_factor=500
+  } || {
+    [[ $zram_size_out -gt 11000000 ]] &&
+      watermark_scale_factor=450
+  } || {
+    [[ $zram_size_out -gt 7000000 ]] &&
+      watermark_scale_factor=400
+  } || {
+    [[ $zram_size_out -gt 5000000 ]] &&
+      watermark_scale_factor=350
+  } || {
+    [[ $zram_size_out -gt 3000000 ]] &&
+      watermark_scale_factor=300
+  } || {
     watermark_scale_factor=250
-  fi
+  }
 
   echo "- [i]:正在设置watermark_scale_factor"
   echo "$watermark_scale_factor" >/proc/sys/vm/watermark_scale_factor
@@ -187,46 +213,49 @@ set_vm_params() {
   [[ $lt != "$watermark_scale_factor" ]] && echo "- [!]:目标设置为:$watermark_scale_factor,实际设置为:$lt"
 
   #设置cache参数
-  echo "- [i]:设置cache参数"
-  set_value 10 /proc/sys/vm/dirty_background_ratio
-  set_value 80 /proc/sys/vm/dirty_ratio
-  set_value 2000 /proc/sys/vm/dirty_expire_centisecs
-  set_value 300 /proc/sys/vm/dirty_writeback_centisecs
-  set_value 150 /proc/sys/vm/vfs_cache_pressure
+  {
+    echo "- [i]:设置cache参数"
+    set_value 10 /proc/sys/vm/dirty_background_ratio
+    set_value 80 /proc/sys/vm/dirty_ratio
+    set_value 2000 /proc/sys/vm/dirty_expire_centisecs
+    set_value 300 /proc/sys/vm/dirty_writeback_centisecs
+    set_value 150 /proc/sys/vm/vfs_cache_pressure
 
-  #设置其它vm参数
-  echo "- [i]:设置其它vm参数"
-  # 杀死触发oom的那个进程
-  set_value 1 /proc/sys/vm/oom_kill_allocating_task
-  # 是否打印 oom日志
-  set_value 0 /proc/sys/vm/oom_dump_tasks
-  # 是否要允许压缩匿名页
-  set_value 1 /proc/sys/vm/compact_unevictable_allowed
-  # io调试开关
-  set_value 0 /proc/sys/vm/block_dump
-  # vm 状态更新频率
-  set_value 20 /proc/sys/vm/stat_interval
-  # 是否允许过量使用运存
-  #  set_value 200 /proc/sys/vm/overcommit_ratio
-  set_value 1 /proc/sys/vm/overcommit_memory
-  # 触发oom后怎么抛异常
-  set_value 0 /proc/sys/vm/panic_on_oom
-  #压缩内存节省空间（会导致kswap0异常）
-  #  set_value 1 /proc/sys/vm/compact_memory
-  #watermark_boost_factor用于优化内存外碎片化
-  #  set_value 100 /proc/sys/vm/watermark_boost_factor
-  #参数越小越倾向于进行内存规整，越大越不容易进行内存规整。
-  #  set_value 400 /proc/sys/vm/extfrag_threshold
-  # 禁用高通内存回收机制（ppr）
-  set_value 0 /sys/module/process_reclaim/parameters/enable_process_reclaim
-  # 禁用 mi_reclaim
-  set_value 0 /sys/kernel/mi_reclaim/enable
-  # 每次换入的内存页
-  if [[ $comp_algorithm == "zstd" ]]; then
-    set_value 0 /proc/sys/vm/page-cluster
-  else
-    set_value 1 /proc/sys/vm/page-cluster
-  fi
+    #设置其它vm参数
+    echo "- [i]:设置其它vm参数"
+    # 杀死触发oom的那个进程
+    set_value 1 /proc/sys/vm/oom_kill_allocating_task
+    # 是否打印 oom日志
+    set_value 0 /proc/sys/vm/oom_dump_tasks
+    # 是否要允许压缩匿名页
+    set_value 1 /proc/sys/vm/compact_unevictable_allowed
+    # io调试开关
+    set_value 0 /proc/sys/vm/block_dump
+    # vm 状态更新频率
+    set_value 20 /proc/sys/vm/stat_interval
+    # 是否允许过量使用运存
+    #  set_value 200 /proc/sys/vm/overcommit_ratio
+    set_value 1 /proc/sys/vm/overcommit_memory
+    # 触发oom后怎么抛异常
+    set_value 0 /proc/sys/vm/panic_on_oom
+    #压缩内存节省空间（会导致kswap0异常）
+    #  set_value 1 /proc/sys/vm/compact_memory
+    #watermark_boost_factor用于优化内存外碎片化
+    #  set_value 100 /proc/sys/vm/watermark_boost_factor
+    #参数越小越倾向于进行内存规整，越大越不容易进行内存规整。
+    #  set_value 400 /proc/sys/vm/extfrag_threshold
+    # 禁用高通内存回收机制（ppr）
+    set_value 0 /sys/module/process_reclaim/parameters/enable_process_reclaim
+    # 禁用 mi_reclaim
+    set_value 0 /sys/kernel/mi_reclaim/enable
+    # 每次换入的内存页
+    {
+      [[ $comp_algorithm == "zstd" ]] &&
+        set_value 0 /proc/sys/vm/page-cluster
+    } || {
+      set_value 1 /proc/sys/vm/page-cluster
+    }
+  }
 }
 
 #其他设置
@@ -259,70 +288,74 @@ other_setting() {
 
   #检查是否存在指定文件
   [[ -f /system/system_ext/etc/camerabooster.json ]] && {
-    if [[ ! -f "$huanchen/system/system_ext/etc/camerabooster.json" ]]; then
+    {
+      [[ ! -f "$huanchen/system/system_ext/etc/camerabooster.json" ]] && {
+        echo "- [i]:成功优化相机杀后台问题"
+        echo "- [!]:为了完全生效请再重启一次"
+        mkdir -p "$huanchen/system/system_ext/etc/"
+        cp -f "/system/system_ext/etc/camerabooster.json" "$huanchen/system/system_ext/etc/"
+        sed -i 's/"cam_boost_enable": true/"cam_boost_enable": false/g' "$huanchen/system/system_ext/etc/camerabooster.json"
+      }
+    } || {
       echo "- [i]:成功优化相机杀后台问题"
-      echo "- [!]:为了完全生效请再重启一次"
-      mkdir -p "$huanchen/system/system_ext/etc/"
-      cp -f "/system/system_ext/etc/camerabooster.json" "$huanchen/system/system_ext/etc/"
-      sed -i 's/"cam_boost_enable": true/"cam_boost_enable": false/g' "$huanchen/system/system_ext/etc/camerabooster.json"
-    else
-      echo "- [i]:成功优化相机杀后台问题"
-    fi
+    }
   }
 
   #高通专用修改
-  if [[ ! -f $overlay_file ]]; then
-    [[ "$(getprop ro.hardware)" == "qcom" ]] && {
-      [[ -f $origin_file ]] && mkdir -p "$origin_folder" && cp -f "$origin_file" "$origin_folder"
-      [[ -f $overlay_file ]] && {
-        touch "$huanchen"/Qualcomm
-        Update_overlay vendor.iop.enable_uxe 1
-        Update_overlay vendor.debug.enable.lm false
-        Update_overlay vendor.perf.iop_v3.enable true
-        Update_overlay vendor.enable.prefetch true
-        Update_overlay vendor.iop.enable_prefetch_ofr true
-        Update_overlay vendor.iop.enable_speed true
-        Update_overlay ro.vendor.qti.sys.fw.bservice_age 900000
-        Update_overlay ro.vendor.qti.sys.fw.bservice_limit 114514
-        Update_overlay ro.vendor.perf.enable.prekill false
-        Update_overlay vendor.prekill_MIN_ADJ_to_Kill 1001
-        Update_overlay vendor.prekill_MAX_ADJ_to_Kill 1001
-        Update_overlay vendor.debug.enable.memperfd false
-        Update_overlay ro.lmk.thrashing_limit_pct_dup 100
-        Update_overlay ro.lmk.kill_heaviest_task_dup false
-        Update_overlay ro.lmk.kill_timeout_ms_dup 500
-        Update_overlay ro.lmk.thrashing_threshold 100
-        Update_overlay ro.lmk.thrashing_decay 10
-        Update_overlay ro.lmk.nstrat_low_swap 0
-        Update_overlay ro.lmk.nstrat_psi_partial_ms 600
-        Update_overlay ro.lmk.nstrat_psi_complete_ms 900
-        Update_overlay ro.lmk.nstrat_psi_scrit_complete_stall_ms 1000
-        Update_overlay ro.lmk.nstrat_wmark_boost_factor 0
-        Update_overlay ro.lmk.enhance_batch_kill false
-        Update_overlay ro.lmk.enable_watermark_check false
-        Update_overlay ro.lmk.enable_preferred_apps false
-        Update_overlay vendor.appcompact.enable_app_compact false
-        Update_overlay ro.vendor.qti.sys.fw.bg_apps_limit 114514
-        Update_overlay ro.vendor.qti.sys.fw.empty_app_percent 0
-        Update_overlay ro.lmk.enable_userspace_lmk false
-        Update_overlay vendor.perf.phr.enable 0
-        Update_overlay ro.vendor.iocgrp.config 1
-        Update_overlay ro.lmk.super_critical 1001
-        Update_overlay ro.lmk.direct_reclaim_pressure 100
-        Update_overlay ro.lmk.reclaim_scan_threshold 1024
-        Update_overlay ro.vendor.qti.am.reschedule_service false
-        #Update_overlay ro.vendor.qti.sys.fw.bservice_enable false
-        #Update_overlay ro.vendor.qti.config.zram false
-        #Update_overlay ro.vendor.qti.config.swap false
-        echo "- [i]:成功执行高通专改"
-        echo "- [!]:为了完全生效请再重启一次"
+  {
+    [[ ! -f $overlay_file ]] && {
+      [[ "$(getprop ro.hardware)" == "qcom" ]] && {
+        [[ -f $origin_file ]] && mkdir -p "$origin_folder" && cp -f "$origin_file" "$origin_folder"
+        [[ -f $overlay_file ]] && {
+          touch "$huanchen"/Qualcomm
+          Update_overlay vendor.iop.enable_uxe 1
+          Update_overlay vendor.debug.enable.lm false
+          Update_overlay vendor.perf.iop_v3.enable true
+          Update_overlay vendor.enable.prefetch true
+          Update_overlay vendor.iop.enable_prefetch_ofr true
+          Update_overlay vendor.iop.enable_speed true
+          Update_overlay ro.vendor.qti.sys.fw.bservice_age 900000
+          Update_overlay ro.vendor.qti.sys.fw.bservice_limit 114514
+          Update_overlay ro.vendor.perf.enable.prekill false
+          Update_overlay vendor.prekill_MIN_ADJ_to_Kill 1001
+          Update_overlay vendor.prekill_MAX_ADJ_to_Kill 1001
+          Update_overlay vendor.debug.enable.memperfd false
+          Update_overlay ro.lmk.thrashing_limit_pct_dup 100
+          Update_overlay ro.lmk.kill_heaviest_task_dup false
+          Update_overlay ro.lmk.kill_timeout_ms_dup 500
+          Update_overlay ro.lmk.thrashing_threshold 100
+          Update_overlay ro.lmk.thrashing_decay 10
+          Update_overlay ro.lmk.nstrat_low_swap 0
+          Update_overlay ro.lmk.nstrat_psi_partial_ms 600
+          Update_overlay ro.lmk.nstrat_psi_complete_ms 900
+          Update_overlay ro.lmk.nstrat_psi_scrit_complete_stall_ms 1000
+          Update_overlay ro.lmk.nstrat_wmark_boost_factor 0
+          Update_overlay ro.lmk.enhance_batch_kill false
+          Update_overlay ro.lmk.enable_watermark_check false
+          Update_overlay ro.lmk.enable_preferred_apps false
+          Update_overlay vendor.appcompact.enable_app_compact false
+          Update_overlay ro.vendor.qti.sys.fw.bg_apps_limit 114514
+          Update_overlay ro.vendor.qti.sys.fw.empty_app_percent 0
+          Update_overlay ro.lmk.enable_userspace_lmk false
+          Update_overlay vendor.perf.phr.enable 0
+          Update_overlay ro.vendor.iocgrp.config 1
+          Update_overlay ro.lmk.super_critical 1001
+          Update_overlay ro.lmk.direct_reclaim_pressure 100
+          Update_overlay ro.lmk.reclaim_scan_threshold 1024
+          Update_overlay ro.vendor.qti.am.reschedule_service false
+          #Update_overlay ro.vendor.qti.sys.fw.bservice_enable false
+          #Update_overlay ro.vendor.qti.config.zram false
+          #Update_overlay ro.vendor.qti.config.swap false
+          echo "- [i]:成功执行高通专改"
+          echo "- [!]:为了完全生效请再重启一次"
+        }
       }
     }
-  else
+  } || {
     [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
       echo "- [i]:成功执行高通专改"
     }
-  fi
+  }
 }
 
 #prop设置
@@ -434,26 +467,28 @@ on_prop_pool() {
   #  ro.vendor.qti.sys.fw.bservice_enable=false
   echo "- [i]:开始进行prop修改"
   [[ -f "$huanchen"/Prop_on ]] && prop_on=$(cat "$huanchen"/Prop_on)
-  if [[ $prop_on == 0 ]]; then
-    echo "- [!]:为了完全生效请再重启一次"
-    echo "vtools.swap.controller=module" >"$huanchen"/system.prop
-    for p in $prop_pool; do
-      check_prop=$(echo "$p" | cut -d '=' -f1)
-      [[ $(getprop "$check_prop") != "" ]] && {
-        resetprop "$check_prop" "$(echo "$p" | cut -d '=' -f2)"
-        echo "$check_prop" "$(getprop "$check_prop")"
-        echo "$p" >>"$huanchen"/system.prop
+  {
+    [[ $prop_on == 0 ]] && {
+      echo "- [!]:为了完全生效请再重启一次"
+      echo "vtools.swap.controller=module" >"$huanchen"/system.prop
+      for p in $prop_pool; do
+        check_prop=$(echo "$p" | cut -d '=' -f1)
+        [[ $(getprop "$check_prop") != "" ]] && {
+          resetprop "$check_prop" "$(echo "$p" | cut -d '=' -f2)"
+          echo "$check_prop" "$(getprop "$check_prop")"
+          echo "$p" >>"$huanchen"/system.prop
+        }
+      done
+      [[ $sdk != "33" ]] && {
+        [[ $(getprop ro.lmk.use_psi) != "" ]] && {
+          resetprop ro.lmk.use_psi true
+          echo "ro.lmk.use_psi $(getprop ro.lmk.use_psi)"
+          echo "ro.lmk.use_psi=true" >>"$huanchen"/system.prop
+        }
       }
-    done
-    [[ $sdk != "33" ]] && {
-      [[ $(getprop ro.lmk.use_psi) != "" ]] && {
-        resetprop ro.lmk.use_psi true
-        echo "ro.lmk.use_psi $(getprop ro.lmk.use_psi)"
-        echo "ro.lmk.use_psi=true" >>"$huanchen"/system.prop
-      }
+      echo -n "1" >"$huanchen"/Prop_on
     }
-    echo -n "1" >"$huanchen"/Prop_on
-  else
+  } || {
     prop_kk=$(cat "$huanchen"/system.prop)
     echo "- [i]:已经加载的prop列表"
     echo "$prop_kk"
@@ -461,21 +496,22 @@ on_prop_pool() {
       one=$(getprop "$(echo "$k" | cut -d '=' -f1)")
       two=$(echo "$k" | cut -d '=' -f2 | tr -d '[:cntrl:]')
       kk=$(echo "$k" | cut -d '=' -f1 | tr -d '[:cntrl:]')
-      if [[ $one != "$two" ]]; then
+      [[ $one != "$two" ]] && {
         echo "- [!]:$kk设置失败,设置为:$two,实际为:$one"
         resetprop "$kk" "$two"
         pp=$(getprop "$kk")
         echo "- [i]:尝试重新设置$kk,设置为:$pp"
-      fi
+      }
     done
     let prop_on++
     echo -n "$prop_on" >"$huanchen"/Prop_on
-  fi
+  }
   echo "- [i]:修改prop设置完毕"
 
   #显示对高通的修改
-  [[ "$(getprop ro.hardware)" == "qcom" ]] && [[ -f "$huanchen"/Qualcomm ]] && {
-    echo "- [i]:设置高通专改"
+  [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] &&
+    [[ "$(getprop ro.hardware)" == "qcom" ]] && [[ -f "$huanchen"/Qualcomm ]] && {
+    echo "- [i]:读取高通专改内容"
     cat "$huanchen"/Qualcomm
   }
 }
@@ -510,42 +546,49 @@ set_kswap_task() {
 close_miui() {
   packages=$(pm list packages -s | sed 's/package://g' | grep 'com.mediatek.duraspeed')
   [[ $(getprop Build.BRAND) == "MTK" ]] && {
-    if [[ $close_kuaiba == "on" ]] && [[ $packages == "com.mediatek.duraspeed" ]]; then
-      pm disable com.mediatek.duraspeed &>/dev/null
-      pm disable com.mediatek.duraspeed/com.mediatek.duraspeed.DuraSpeedAppReceiver &>/dev/null
-      pm disable com.mediatek.duraspeed/com.mediatek.duraspeed.RestrictHistoryActivity &>/dev/null
-      pm disable com.mediatek.duraspeed/com.mediatek.duraspeed.DuraSpeedMainActivity &>/dev/null
-      pm clear com.mediatek.duraspeed &>/dev/null
-      echo "- [i]:成功处理MTK快霸"
-    else
+    {
+      [[ $close_kuaiba == "on" ]] && [[ $packages == "com.mediatek.duraspeed" ]] && {
+        pm disable com.mediatek.duraspeed &>/dev/null
+        pm disable com.mediatek.duraspeed/com.mediatek.duraspeed.DuraSpeedAppReceiver &>/dev/null
+        pm disable com.mediatek.duraspeed/com.mediatek.duraspeed.RestrictHistoryActivity &>/dev/null
+        pm disable com.mediatek.duraspeed/com.mediatek.duraspeed.DuraSpeedMainActivity &>/dev/null
+        pm clear com.mediatek.duraspeed &>/dev/null
+        echo "- [i]:成功处理MTK快霸"
+      }
+    } || {
       [[ $close_kuaiba == "on" ]] && echo "- [i]:成功处理MTK快霸"
-
-    fi
+    }
   }
 }
 
 #热补丁自动删除服务
 hot_patch() {
-  if [[ -d "/data/adb/modules/Hot_patch/" ]] || [[ -d "/data/adb/ksu/modules/Hot_patch/" ]]; then
+  {
+    [[ -d "/data/adb/modules/Hot_patch/" ]] || [[ -d "/data/adb/ksu/modules/Hot_patch/" ]]
+  } && {
     rm -rf /data/adb/modules/Hot_patch/
     rm -rf /data/adb/ksu/modules/Hot_patch/
     echo "- [i]:成功删除补丁模块"
-  fi
+  }
 }
 
 echo "---------------------------------------------------------------------------"
 
 #赋权
-chmod 666 /sys/class/block/zram0/comp_algorithm
-chmod 666 /sys/block/zram0/disksize
-chmod 666 /proc/sys/vm/swappiness
-chmod 666 /proc/sys/vm/watermark_scale_factor
+{
+  chmod 666 /sys/class/block/zram0/comp_algorithm
+  chmod 666 /sys/block/zram0/disksize
+  chmod 666 /proc/sys/vm/swappiness
+  chmod 666 /proc/sys/vm/watermark_scale_factor
+}
 
 #开始执行方法
-set_zram
-set_vm_params
-other_setting
-on_prop_pool
-set_kswap_task
-close_miui
-hot_patch
+{
+  set_zram
+  set_vm_params
+  other_setting
+  on_prop_pool
+  set_kswap_task
+  close_miui
+  hot_patch
+}
