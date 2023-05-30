@@ -530,6 +530,28 @@ on_prop_pool() {
   }
 }
 
+#停止无用服务
+stop_services() {
+  stopd() {
+    stop "$1"
+    echo "- [i]:已停止服务:$1"
+  }
+  echo "- [i]:正在处理无用系统服务"
+  stopd minetd
+  stopd miuibooster
+  stopd oplus_kevents
+  stopd vendor.xiaomi.hidl.minet
+  stopd vendor.xiaomi.hidl.miwill
+  stopd vendor_tcpdump
+  [[ $(getprop Build.BRAND) == "MTK" ]] && {
+    stopd aee.log-1-1
+    stopd charge_logger
+    stopd connsyslogger
+    stopd emdlogger
+    stopd mobile_log_d
+  }
+}
+
 #进程绑定
 set_kswap_task() {
   #绑定进程
@@ -602,6 +624,7 @@ echo "--------------------------------------------------------------------------
   set_vm_params
   other_setting
   on_prop_pool
+  stop_services
   set_kswap_task
   close_miui
   hot_patch

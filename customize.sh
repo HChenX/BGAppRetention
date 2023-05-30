@@ -17,6 +17,7 @@ Output() {
 } || {
   [[ -d $confs2 ]] && iconf="$confs2"
 }
+
 #获取具体文件
 {
   [[ -f "$iconf"/swap/swap.ini ]] && swap_ini="$iconf/swap/swap.ini"
@@ -34,23 +35,32 @@ reserve=$(Get_props reserve)
 
 #删除已经安装的模块
 Delete_cheat() {
-  #此代码用于让scene显示已激活
-  #先删再创建
-  rm -rf /data/swap_config.conf
-  echo "请忽略此文件，也请不要删除。" >/data/swap_config.conf
-  #删除附加模块2防止冲突
-  rm -rf /data/adb/modules/scene_swap_controller/
-  rm -rf /data/adb/ksu/modules/scene_swap_controller/
-  rm -rf /data/swapfile*
-  rm -f /data/swap_recreate
-  #删除小阳光模块防止冲突
-  rm -rf /data/adb/ksu/modules/swap_controller/
-  rm -rf /data/adb/modules/swap_controller/
-  rm -rf /data/adb/swap_controller/
   Output "- [i]:欢迎使用本模块(///ω///)"
   Output "- [i]:正在安装改版模块！< (ˉ^ˉ)> "
   Output "--------------------------------------------"
   Output "--------------------------------------------"
+  Output "- [i]:正在删除冲突文件！"
+  rm_rf() {
+    {
+      [[ -d $1 ]] && rm -rf "$1" && Output "- [i]:已删除:$1"
+    } || {
+      [[ -f $1 ]] && rm -rf "$1" && Output "- [i]:已删除:$1"
+    }
+  }
+  #此代码用于让scene显示已激活
+  #先删再创建
+  rm_rf /data/swap_config.conf
+  echo "请忽略此文件，也请不要删除。" >/data/swap_config.conf
+  #删除附加模块2防止冲突
+  rm_rf /data/adb/modules/scene_swap_controller/
+  rm_rf /data/adb/ksu/modules/scene_swap_controller/
+  rm_rf /data/swapfile*
+  rm_rf /data/swap_recreate
+  #删除小阳光模块防止冲突
+  rm_rf /data/adb/ksu/modules/swap_controller/
+  rm_rf /data/adb/modules/swap_controller/
+  rm_rf /data/adb/swap_controller/
+  Output "- [i]:处理冲突文件完成！"
 }
 
 #安装附加模块
@@ -62,6 +72,7 @@ Dont_kill() {
       Output "- [i]:使用方法：lsp里面激活重启即可。"
       Output "- [i]:模块作者：海浪逃向岛屿"
       unzip -o "$ZIPFILE" 'Don.t.Kill.apk' -d /data/local/tmp/ &>/dev/null
+      [[ ! -f /data/local/tmp/Don.t.Kill.apk ]] && Output "- [!]:解压附加模块失败！无法进行安装！" && exit 1
       pm install -r /data/local/tmp/Don.t.Kill.apk &>/dev/null
       rm -rf /data/local/tmp/Don.t.Kill.apk
       rm -rf "$MODPATH"/Don.t.Kill.apk
@@ -83,6 +94,7 @@ Close_kuaiba() {
     [[ $close_kuaiba == "on" ]] && {
       kuaibaapp="/system/system_ext/priv-app/DuraSpeed/DuraSpeed.apk"
       kuaibaapp2="${kuaibaapp//DuraSpeed.apk/}"
+      [[ ! -f $kuaibaapp ]] && Output "- [!]:不存在快霸文件！请联系开发者！" && exit 2
       mkdir -p "$MODPATH""$kuaibaapp2"
       touch "$MODPATH""$kuaibaapp"
       Output "- [i]:成功处理MTK快霸。"
@@ -104,6 +116,7 @@ close_kuaiba=on" >>"$swaps"
         #第二层保险
         kuaibaapp="/system/system_ext/priv-app/DuraSpeed/DuraSpeed.apk"
         kuaibaapp2="${kuaibaapp//DuraSpeed.apk/}"
+        [[ ! -f $kuaibaapp ]] && Output "- [!]:不存在快霸文件！请联系开发者！" && exit 2
         mkdir -p "$MODPATH""$kuaibaapp2"
         touch "$MODPATH""$kuaibaapp"
         Output "- [i]:成功处理MTK快霸。"
@@ -112,7 +125,7 @@ close_kuaiba=on" >>"$swaps"
 close_kuaiba=on" >>"$swaps"
       }
     } || {
-      echo "- [!]:不是联发科或不存在快霸软件跳过此步。"
+      Output "- [!]:不是联发科或不存在快霸软件跳过此步。"
     }
   }
 }
@@ -160,6 +173,7 @@ Athena_close() {
           #第二层保险
           Athena_such_12="$(find /system/product/ -name Athena.apk 2>/dev/null)"
           Athena_such_13="$(find /system/system_ext/ -name Athena.apk 2>/dev/null)"
+          [[ $Athena_such_12 == "" ]] && [[ $Athena_such_13 == "" ]] && Output "- [!]:获取雅典娜路径失败！请联系作者！" && exit 3
           {
             [[ $Athena_such_12 != "" ]] && {
               Athena_12="${Athena_such_12//Athena.apk/}"
@@ -231,8 +245,12 @@ Other_mode() {
       comp_algorithm=lzo
     }
   }
-  sed -i '12a '"comp_algorithm=$comp_algorithm"'' "$swaps"
-  Output "- [i]:设置zram压缩模式为：$comp_algorithm"
+  {
+    [[ $comp_algorithm == "" ]] && Output "- [!]:获取zram压缩模式失败！" && exit 4
+  } || {
+    sed -i '12a '"comp_algorithm=$comp_algorithm"'' "$swaps"
+    Output "- [i]:设置zram压缩模式为：$comp_algorithm"
+  }
 
   [[ -f $iconf/Prop_on ]] && {
     [[ $(cat "$iconf"/Prop_on) != 0 ]] && {
