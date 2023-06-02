@@ -22,6 +22,7 @@
 #### The latest version is: Background_retention39
 
 - Added cloud updates via Github.
+- Add the function of stopping useless services.
 - Fixed error codes and improved optimization codes.
 - Fixed occasional failures of removing KuaiBa and Athena.
 - Rolled back some modifications and restored some unreasonable operations.
@@ -89,7 +90,7 @@
 
 > Please judge whether to install it yourself!
 
-## Update time: May 30, 2023, 14:30
+## Update time: June 02, 2023, 14:30
 
 # 中文
 
@@ -113,6 +114,7 @@
 #### 最新版本为:保后台39
 
 - 加入Github云更新。
+- 加入停止无用服务的功能。
 - 修正错误代码，完善优化代码。
 - 修复偶发性去除快霸和雅典娜失效的问题。
 - 滚回部分修改，还原一些不合理的操作。
@@ -178,4 +180,4 @@
 
 > 请自行判断是否安装刷入！
 
-## 更新时间:2023.05.30 14:30
+## 更新时间:2023.06.02 14:30

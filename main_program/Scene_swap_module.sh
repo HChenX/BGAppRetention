@@ -291,7 +291,7 @@ other_setting() {
     set_value 64 "$io"/queue/nr_requests
     set_value 2 "$io"/queue/rq_affinity
   done
-  echo "- [i]:设置io调度完成"
+  echo "- [i]:设置io调度参数完成"
 
   #开启multi-gen LRU
   [[ -f /sys/kernel/mm/lru_gen/enabled ]] && {
@@ -303,70 +303,80 @@ other_setting() {
   [[ -f /system/system_ext/etc/camerabooster.json ]] && {
     {
       [[ ! -f "$huanchen/system/system_ext/etc/camerabooster.json" ]] && {
-        echo "- [i]:成功优化相机杀后台问题"
+        echo "- [i]:已优化相机杀后台问题"
         echo "- [!]:为了完全生效请再重启一次"
         mkdir -p "$huanchen/system/system_ext/etc/"
         cp -f "/system/system_ext/etc/camerabooster.json" "$huanchen/system/system_ext/etc/"
         sed -i 's/"cam_boost_enable": true/"cam_boost_enable": false/g' "$huanchen/system/system_ext/etc/camerabooster.json"
       }
     } || {
-      echo "- [i]:成功优化相机杀后台问题"
+      echo "- [i]:已优化相机杀后台问题"
     }
   }
 
   #高通专用修改
-  {
-    [[ ! -f $overlay_file ]] && {
-      [[ "$(getprop ro.hardware)" == "qcom" ]] && {
-        [[ -f $origin_file ]] && mkdir -p "$origin_folder" && cp -f "$origin_file" "$origin_folder"
-        [[ -f $overlay_file ]] && {
-          touch "$huanchen"/Qualcomm
-          Update_overlay vendor.iop.enable_uxe 1
-          Update_overlay vendor.debug.enable.lm false
-          Update_overlay vendor.perf.iop_v3.enable true
-          Update_overlay vendor.enable.prefetch true
-          Update_overlay vendor.iop.enable_prefetch_ofr true
-          Update_overlay vendor.iop.enable_speed true
-          Update_overlay ro.vendor.qti.sys.fw.bservice_age 900000
-          Update_overlay ro.vendor.qti.sys.fw.bservice_limit 114514
-          Update_overlay ro.vendor.perf.enable.prekill false
-          Update_overlay vendor.prekill_MIN_ADJ_to_Kill 1001
-          Update_overlay vendor.prekill_MAX_ADJ_to_Kill 1001
-          Update_overlay vendor.debug.enable.memperfd false
-          Update_overlay ro.lmk.thrashing_limit_pct_dup 100
-          Update_overlay ro.lmk.kill_heaviest_task_dup false
-          Update_overlay ro.lmk.kill_timeout_ms_dup 500
-          Update_overlay ro.lmk.thrashing_threshold 100
-          Update_overlay ro.lmk.thrashing_decay 10
-          Update_overlay ro.lmk.nstrat_low_swap 0
-          Update_overlay ro.lmk.nstrat_psi_partial_ms 600
-          Update_overlay ro.lmk.nstrat_psi_complete_ms 900
-          Update_overlay ro.lmk.nstrat_psi_scrit_complete_stall_ms 1000
-          Update_overlay ro.lmk.nstrat_wmark_boost_factor 0
-          Update_overlay ro.lmk.enhance_batch_kill false
-          Update_overlay ro.lmk.enable_watermark_check false
-          Update_overlay ro.lmk.enable_preferred_apps false
-          Update_overlay vendor.appcompact.enable_app_compact false
-          Update_overlay ro.vendor.qti.sys.fw.bg_apps_limit 114514
-          Update_overlay ro.vendor.qti.sys.fw.empty_app_percent 0
-          Update_overlay ro.lmk.enable_userspace_lmk false
-          Update_overlay vendor.perf.phr.enable 0
-          Update_overlay ro.vendor.iocgrp.config 1
-          Update_overlay ro.lmk.super_critical 1001
-          Update_overlay ro.lmk.direct_reclaim_pressure 100
-          Update_overlay ro.lmk.reclaim_scan_threshold 1024
-          Update_overlay ro.vendor.qti.am.reschedule_service false
-          #Update_overlay ro.vendor.qti.sys.fw.bservice_enable false
-          #Update_overlay ro.vendor.qti.config.zram false
-          #Update_overlay ro.vendor.qti.config.swap false
-          echo "- [i]:成功执行高通专改"
-          echo "- [!]:为了完全生效请再重启一次"
+  [[ "$(getprop ro.hardware)" == "qcom" ]] && {
+    {
+      [[ -f $origin_file ]] && [[ $(du -k "$origin_file" | cut -f1) -ne 0 ]] && {
+        {
+          [[ ! -f $overlay_file ]] && {
+            mkdir -p "$origin_folder"
+            {
+              ! cp -f "$origin_file" "$origin_folder"
+            } && {
+              echo "- [!]:复制高通专改关键文件失败"
+            } || {
+              touch "$huanchen"/Qualcomm
+              Update_overlay vendor.iop.enable_uxe 1
+              Update_overlay vendor.debug.enable.lm false
+              Update_overlay vendor.perf.iop_v3.enable true
+              Update_overlay vendor.enable.prefetch true
+              Update_overlay vendor.iop.enable_prefetch_ofr true
+              Update_overlay vendor.iop.enable_speed true
+              Update_overlay ro.vendor.qti.sys.fw.bservice_age 900000
+              Update_overlay ro.vendor.qti.sys.fw.bservice_limit 114514
+              Update_overlay ro.vendor.perf.enable.prekill false
+              Update_overlay vendor.prekill_MIN_ADJ_to_Kill 1001
+              Update_overlay vendor.prekill_MAX_ADJ_to_Kill 1001
+              Update_overlay vendor.debug.enable.memperfd false
+              Update_overlay ro.lmk.thrashing_limit_pct_dup 100
+              Update_overlay ro.lmk.kill_heaviest_task_dup false
+              Update_overlay ro.lmk.kill_timeout_ms_dup 500
+              Update_overlay ro.lmk.thrashing_threshold 100
+              Update_overlay ro.lmk.thrashing_decay 10
+              Update_overlay ro.lmk.nstrat_low_swap 0
+              Update_overlay ro.lmk.nstrat_psi_partial_ms 600
+              Update_overlay ro.lmk.nstrat_psi_complete_ms 900
+              Update_overlay ro.lmk.nstrat_psi_scrit_complete_stall_ms 1000
+              Update_overlay ro.lmk.nstrat_wmark_boost_factor 0
+              Update_overlay ro.lmk.enhance_batch_kill false
+              Update_overlay ro.lmk.enable_watermark_check false
+              Update_overlay ro.lmk.enable_preferred_apps false
+              Update_overlay vendor.appcompact.enable_app_compact false
+              Update_overlay ro.vendor.qti.sys.fw.bg_apps_limit 114514
+              Update_overlay ro.vendor.qti.sys.fw.empty_app_percent 0
+              Update_overlay ro.lmk.enable_userspace_lmk false
+              Update_overlay vendor.perf.phr.enable 0
+              Update_overlay ro.vendor.iocgrp.config 1
+              Update_overlay ro.lmk.super_critical 1001
+              Update_overlay ro.lmk.direct_reclaim_pressure 100
+              Update_overlay ro.lmk.reclaim_scan_threshold 1024
+              Update_overlay ro.vendor.qti.am.reschedule_service false
+              #Update_overlay ro.vendor.qti.sys.fw.bservice_enable false
+              #Update_overlay ro.vendor.qti.config.zram false
+              #Update_overlay ro.vendor.qti.config.swap false
+              echo "- [i]:成功执行高通专改"
+              echo "- [!]:为了完全生效请再重启一次"
+            }
+          }
+        } || {
+          [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
+            echo "- [i]:成功执行高通专改"
+          }
         }
       }
-    }
-  } || {
-    [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
-      echo "- [i]:成功执行高通专改"
+    } || {
+      echo "- [!]:源文件为空，无法进行高通专改"
     }
   }
 }
@@ -478,7 +488,7 @@ on_prop_pool() {
   #  persist.sys.oplus.nandswap=false
   #  用于控制后台服务（Background Service）的启用和禁用。
   #  ro.vendor.qti.sys.fw.bservice_enable=false
-  echo "- [i]:开始进行prop修改"
+  echo "- [i]:开始进行prop参数修改"
   [[ -f "$huanchen"/Prop_on ]] && prop_on=$(cat "$huanchen"/Prop_on)
   {
     [[ $prop_on == 0 ]] && {
@@ -503,7 +513,7 @@ on_prop_pool() {
     }
   } || {
     prop_kk=$(cat "$huanchen"/system.prop)
-    echo "- [i]:已经加载的prop列表"
+    echo "- [i]:正在加载prop参数列表"
     echo "$prop_kk"
     for k in $prop_kk; do
       one=$(getprop "$(echo "$k" | cut -d '=' -f1)")
@@ -519,13 +529,17 @@ on_prop_pool() {
     let prop_on++
     echo -n "$prop_on" >"$huanchen"/Prop_on
   }
-  echo "- [i]:修改prop设置完毕"
+  echo "- [i]:修改prop参数完毕"
 
   #显示对高通的修改
-  [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
-    [[ "$(getprop ro.hardware)" == "qcom" ]] && [[ -f "$huanchen"/Qualcomm ]] && {
-      echo "- [i]:读取高通专改内容"
-      cat "$huanchen"/Qualcomm
+  [[ -f "$huanchen"/Qualcomm ]] && {
+    {
+      [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
+        echo "- [i]:读取高通专改内容"
+        cat "$huanchen"/Qualcomm
+      }
+    } || {
+      echo "- [!]:高通专改修改内容为空"
     }
   }
 }
@@ -533,12 +547,13 @@ on_prop_pool() {
 #停止无用服务
 stop_services() {
   stopd() {
-    stop "$1"
-    echo "- [i]:已停止服务:$1"
+    {
+      stop "$1"
+    } && {
+      echo "- [i]:已停止服务:$1"
+    }
   }
   echo "- [i]:正在处理无用系统服务"
-  stopd minetd
-  stopd miuibooster
   stopd oplus_kevents
   stopd vendor.xiaomi.hidl.minet
   stopd vendor.xiaomi.hidl.miwill
