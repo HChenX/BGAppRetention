@@ -5,12 +5,21 @@ sdk=$(getprop ro.system.build.version.sdk)
 alias settings="/system/bin/settings"
 alias device_config="/system/bin/device_config"
 
-#获取本sh的pid
-pid=$$
+#等待开机解锁
+Wait_until_login() {
+  # in case of /data encryption is disabled
+  while [ "$(getprop sys.boot_completed)" != "1" ]; do
+    sleep 1
+  done
 
-#pid输出
-sed -i '2d' "$huanchen"/main_program/Delete_scene.sh
-sed -i '1a '$pid'' "$huanchen"/main_program/Delete_scene.sh
+  # in case of the user unlocked the screen
+  while [ ! -d "/sdcard/Android" ]; do
+    sleep 1
+  done
+}
+
+#等待开机解锁
+Wait_until_login
 
 #往log里面写点东西
 #很明显用于调试
@@ -30,25 +39,9 @@ echo "手机品牌: $(getprop ro.product.brand)" >"$Log"
 } >>"$Log"
 
 #赋权，可能没啥用，有一定保障作用
-chmod 777 "$huanchen"/main_program/Delete_scene.sh
 chmod 777 "$huanchen"/main_program/Scene_swap_module.sh
 
 #下面就是主代码了
-Wait_until_login() {
-  # in case of /data encryption is disabled
-  while [ "$(getprop sys.boot_completed)" != "1" ]; do
-    sleep 1
-  done
-
-  # in case of the user unlocked the screen
-  while [ ! -d "/sdcard/Android" ]; do
-    sleep 1
-  done
-}
-
-#等待开机解锁
-Wait_until_login
-
 #更改selinux规则
 magiskpolicy --live "allow system_server * * *"
 
@@ -62,19 +55,18 @@ magiskpolicy --live "allow system_server * * *"
     device_config put activity_manager max_phantom_processes 2147483647
     settings put global activity_manager_constants max_cached_processes 2147483647
     settings put global activity_manager_constants max_phantom_processes 2147483647
-    echo "- [i]: 解除进程限制成功" >>"$Log"
+    echo "- [i]: 解除进程限制成功:for A>29" >>"$Log"
   }
 } || {
   [[ "$sdk" -ge 26 ]] && {
     android_9=$(settings get global activity_manager_constants | sed 's/$/,max_cached_processes=2147483647/')
     settings put global activity_manager_constants "$android_9"
-    echo "- [i]: 解除进程限制成功" >>"$Log"
+    echo "- [i]: 解除进程限制成功:for A8/9" >>"$Log"
   }
 }
 
 #开始运行主程序
 {
-  sh "$huanchen"/main_program/Delete_scene.sh
   sh "$huanchen"/main_program/Scene_swap_module.sh
   echo "---------------------------------------------------------------------------"
 } >>"$Log"

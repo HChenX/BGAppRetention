@@ -5,6 +5,10 @@ sdk=$(getprop ro.system.build.version.sdk)
 origin_file="/system/vendor/etc/perf/perfconfigstore.xml"
 origin_folder="$huanchen/system/vendor/etc/perf/"
 overlay_file="$huanchen$origin_file"
+record=0
+
+#检查是否为ksu
+[[ -f "/data/adb/ksud" ]] && ksu_check=true
 
 #设置变量
 {
@@ -70,7 +74,7 @@ set_value() {
 }
 
 #修改高通文件
-Update_overlay() {
+update_overlay() {
   {
     sed -i "s/Name=\"$1\" Value=\".*\"/Name=\"$1\" Value=\"$2\"/" "$overlay_file" && {
       grep -q "<Prop Name=\"$1\" Value=\"$2\" />" "$overlay_file"
@@ -80,11 +84,28 @@ Update_overlay() {
   }
 }
 
-# 解析配置
+#发送状态栏通知
+Send_notifications() {
+  local text=$1
+  local title=$2
+  local author=2000
+  {
+    [[ $(pm list package | grep -w 'com.google.android.ext.services') != "" ]]
+  } && {
+    cmd notification allow_assistant "com.google.android.ext.services/android.ext.services.notification.Assistant"
+  }
+
+  su -lp $author -c \
+    "cmd notification post -S messaging --conversation '$title' --message '$title':'$text' Tag '$RANDOM'" &>/dev/null
+}
+
 echo "---------------------------------------------------------------------------"
 
 #设置zram
 set_zram() {
+
+  [[ $ksu_check == "true" ]] && echo "- [!]:注意！正在使用ksu，模块功能受限"
+
   [[ ! -e /dev/block/zram0 ]] && {
     {
       [[ -e /sys/class/zram-control ]] && {
@@ -99,25 +120,15 @@ set_zram() {
   #请根据你手机物理内存大小更改
   #直接更改前面的”15“”11“等就行
   {
-    [[ $zram_size_out -gt 15000000 ]] && {
-      zram_size_in=19
-    }
+    [[ $zram_size_out -gt 15000000 ]] && zram_size_in=19
   } || {
-    [[ $zram_size_out -gt 11000000 ]] && {
-      zram_size_in=15
-    }
+    [[ $zram_size_out -gt 11000000 ]] && zram_size_in=15
   } || {
-    [[ $zram_size_out -gt 7000000 ]] && {
-      zram_size_in=11
-    }
+    [[ $zram_size_out -gt 7000000 ]] && zram_size_in=11
   } || {
-    [[ $zram_size_out -gt 5000000 ]] && {
-      zram_size_in=9
-    }
+    [[ $zram_size_out -gt 5000000 ]] && zram_size_in=9
   } || {
-    [[ $zram_size_out -gt 3000000 ]] && {
-      zram_size_in=7
-    }
+    [[ $zram_size_out -gt 3000000 ]] && zram_size_in=7
   } || {
     zram_size_in=5
   }
@@ -195,25 +206,15 @@ set_vm_params() {
 
   #设置watermark_scale_factor
   {
-    [[ $zram_size_out -gt 15000000 ]] && {
-      watermark_scale_factor=500
-    }
+    [[ $zram_size_out -gt 15000000 ]] && watermark_scale_factor=500
   } || {
-    [[ $zram_size_out -gt 11000000 ]] && {
-      watermark_scale_factor=450
-    }
+    [[ $zram_size_out -gt 11000000 ]] && watermark_scale_factor=450
   } || {
-    [[ $zram_size_out -gt 7000000 ]] && {
-      watermark_scale_factor=400
-    }
+    [[ $zram_size_out -gt 7000000 ]] && watermark_scale_factor=400
   } || {
-    [[ $zram_size_out -gt 5000000 ]] && {
-      watermark_scale_factor=350
-    }
+    [[ $zram_size_out -gt 5000000 ]] && watermark_scale_factor=350
   } || {
-    [[ $zram_size_out -gt 3000000 ]] && {
-      watermark_scale_factor=300
-    }
+    [[ $zram_size_out -gt 3000000 ]] && watermark_scale_factor=300
   } || {
     watermark_scale_factor=250
   }
@@ -250,11 +251,11 @@ set_vm_params() {
     set_value 1 /proc/sys/vm/overcommit_memory
     # 触发oom后怎么抛异常
     set_value 0 /proc/sys/vm/panic_on_oom
-    #压缩内存节省空间（会导致kswap0异常）
+    #  压缩内存节省空间（会导致kswap0异常）
     #  set_value 1 /proc/sys/vm/compact_memory
-    #watermark_boost_factor用于优化内存外碎片化
+    #  watermark_boost_factor用于优化内存外碎片化
     #  set_value 100 /proc/sys/vm/watermark_boost_factor
-    #参数越小越倾向于进行内存规整，越大越不容易进行内存规整。
+    #  参数越小越倾向于进行内存规整，越大越不容易进行内存规整。
     #  set_value 400 /proc/sys/vm/extfrag_threshold
     # 禁用高通内存回收机制（ppr）
     set_value 0 /sys/module/process_reclaim/parameters/enable_process_reclaim
@@ -300,83 +301,89 @@ other_setting() {
   }
 
   #检查是否存在指定文件
-  [[ -f /system/system_ext/etc/camerabooster.json ]] && {
-    {
-      [[ ! -f "$huanchen/system/system_ext/etc/camerabooster.json" ]] && {
+  [[ $ksu_check != "true" ]] && {
+    [[ -f /system/system_ext/etc/camerabooster.json ]] && {
+      {
+        [[ ! -f "$huanchen/system/system_ext/etc/camerabooster.json" ]] && {
+          echo "- [i]:已优化相机杀后台问题"
+          echo "- [!]:为了完全生效请再重启一次"
+          let record++
+          mkdir -p "$huanchen/system/system_ext/etc/"
+          cp -f "/system/system_ext/etc/camerabooster.json" "$huanchen/system/system_ext/etc/"
+          sed -i 's/"cam_boost_enable": true/"cam_boost_enable": false/g' "$huanchen/system/system_ext/etc/camerabooster.json"
+        }
+      } || {
         echo "- [i]:已优化相机杀后台问题"
-        echo "- [!]:为了完全生效请再重启一次"
-        mkdir -p "$huanchen/system/system_ext/etc/"
-        cp -f "/system/system_ext/etc/camerabooster.json" "$huanchen/system/system_ext/etc/"
-        sed -i 's/"cam_boost_enable": true/"cam_boost_enable": false/g' "$huanchen/system/system_ext/etc/camerabooster.json"
       }
-    } || {
-      echo "- [i]:已优化相机杀后台问题"
     }
   }
 
   #高通专用修改
-  [[ "$(getprop ro.hardware)" == "qcom" ]] && {
-    {
-      [[ -f $origin_file ]] && [[ $(du -k "$origin_file" | cut -f1) -ne 0 ]] && {
-        {
-          [[ ! -f $overlay_file ]] && {
-            mkdir -p "$origin_folder"
-            {
-              ! cp -f "$origin_file" "$origin_folder"
-            } && {
-              echo "- [!]:复制高通专改关键文件失败"
-            } || {
-              touch "$huanchen"/Qualcomm
-              Update_overlay vendor.iop.enable_uxe 1
-              Update_overlay vendor.debug.enable.lm false
-              Update_overlay vendor.perf.iop_v3.enable true
-              Update_overlay vendor.enable.prefetch true
-              Update_overlay vendor.iop.enable_prefetch_ofr true
-              Update_overlay vendor.iop.enable_speed true
-              Update_overlay ro.vendor.qti.sys.fw.bservice_age 900000
-              Update_overlay ro.vendor.qti.sys.fw.bservice_limit 114514
-              Update_overlay ro.vendor.perf.enable.prekill false
-              Update_overlay vendor.prekill_MIN_ADJ_to_Kill 1001
-              Update_overlay vendor.prekill_MAX_ADJ_to_Kill 1001
-              Update_overlay vendor.debug.enable.memperfd false
-              Update_overlay ro.lmk.thrashing_limit_pct_dup 100
-              Update_overlay ro.lmk.kill_heaviest_task_dup false
-              Update_overlay ro.lmk.kill_timeout_ms_dup 500
-              Update_overlay ro.lmk.thrashing_threshold 100
-              Update_overlay ro.lmk.thrashing_decay 10
-              Update_overlay ro.lmk.nstrat_low_swap 0
-              Update_overlay ro.lmk.nstrat_psi_partial_ms 600
-              Update_overlay ro.lmk.nstrat_psi_complete_ms 900
-              Update_overlay ro.lmk.nstrat_psi_scrit_complete_stall_ms 1000
-              Update_overlay ro.lmk.nstrat_wmark_boost_factor 0
-              Update_overlay ro.lmk.enhance_batch_kill false
-              Update_overlay ro.lmk.enable_watermark_check false
-              Update_overlay ro.lmk.enable_preferred_apps false
-              Update_overlay vendor.appcompact.enable_app_compact false
-              Update_overlay ro.vendor.qti.sys.fw.bg_apps_limit 114514
-              Update_overlay ro.vendor.qti.sys.fw.empty_app_percent 0
-              Update_overlay ro.lmk.enable_userspace_lmk false
-              Update_overlay vendor.perf.phr.enable 0
-              Update_overlay ro.vendor.iocgrp.config 1
-              Update_overlay ro.lmk.super_critical 1001
-              Update_overlay ro.lmk.direct_reclaim_pressure 100
-              Update_overlay ro.lmk.reclaim_scan_threshold 1024
-              Update_overlay ro.vendor.qti.am.reschedule_service false
-              #Update_overlay ro.vendor.qti.sys.fw.bservice_enable false
-              #Update_overlay ro.vendor.qti.config.zram false
-              #Update_overlay ro.vendor.qti.config.swap false
+  [[ $ksu_check != "true" ]] && {
+    [[ "$(getprop ro.hardware)" == "qcom" ]] && {
+      {
+        [[ -f $origin_file ]] && [[ $(du -k "$origin_file" | cut -f1) -ne 0 ]] && {
+          {
+            [[ ! -f $overlay_file ]] && {
+              mkdir -p "$origin_folder"
+              {
+                ! cp -f "$origin_file" "$origin_folder"
+              } && {
+                echo "- [!]:复制高通专改关键文件失败"
+              } || {
+                touch "$huanchen"/Qualcomm
+                update_overlay vendor.debug.enable.lm false
+                update_overlay ro.vendor.qti.sys.fw.bservice_age 2147483647
+                update_overlay ro.vendor.qti.sys.fw.bservice_limit 2147483647
+                update_overlay ro.vendor.perf.enable.prekill false
+                update_overlay vendor.prekill_MIN_ADJ_to_Kill 1001
+                update_overlay vendor.prekill_MAX_ADJ_to_Kill 1001
+                update_overlay vendor.debug.enable.memperfd false
+                update_overlay ro.lmk.thrashing_limit_pct_dup 100
+                update_overlay ro.lmk.kill_heaviest_task_dup false
+                update_overlay ro.lmk.kill_timeout_ms_dup 500
+                update_overlay ro.lmk.thrashing_threshold 100
+                update_overlay ro.lmk.thrashing_decay 10
+                update_overlay ro.lmk.nstrat_psi_partial_ms 600
+                update_overlay ro.lmk.nstrat_psi_complete_ms 900
+                update_overlay ro.lmk.nstrat_psi_scrit_complete_stall_ms 1000
+                update_overlay ro.lmk.nstrat_wmark_boost_factor 0
+                update_overlay ro.lmk.enhance_batch_kill false
+                update_overlay ro.lmk.enable_watermark_check false
+                update_overlay ro.lmk.enable_preferred_apps false
+                update_overlay ro.vendor.qti.sys.fw.bg_apps_limit 2147483647
+                update_overlay ro.vendor.qti.sys.fw.empty_app_percent 100
+                update_overlay ro.lmk.enable_userspace_lmk false
+                update_overlay vendor.perf.phr.enable 0
+                update_overlay ro.lmk.super_critical 1001
+                update_overlay ro.lmk.direct_reclaim_pressure 100
+                update_overlay ro.lmk.reclaim_scan_threshold 0
+                update_overlay ro.vendor.qti.am.reschedule_service true
+                update_overlay ro.lmk.nstrat_low_swap 0
+                #update_overlay ro.vendor.iocgrp.config 1
+                #update_overlay vendor.iop.enable_prefetch_ofr true
+                #update_overlay vendor.iop.enable_speed true
+                #update_overlay vendor.enable.prefetch true
+                #update_overlay vendor.perf.iop_v3.enable true
+                #update_overlay vendor.iop.enable_uxe 1
+                #update_overlay ro.vendor.qti.sys.fw.bservice_enable false
+                #update_overlay ro.vendor.qti.config.zram false
+                #update_overlay ro.vendor.qti.config.swap false
+                #update_overlay vendor.appcompact.enable_app_compact false
+                echo "- [i]:成功执行高通专改"
+                echo "- [!]:为了完全生效请再重启一次"
+                let record++
+              }
+            }
+          } || {
+            [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
               echo "- [i]:成功执行高通专改"
-              echo "- [!]:为了完全生效请再重启一次"
             }
           }
-        } || {
-          [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
-            echo "- [i]:成功执行高通专改"
-          }
         }
+      } || {
+        echo "- [!]:源文件为空，无法进行高通专改"
       }
-    } || {
-      echo "- [!]:源文件为空，无法进行高通专改"
     }
   }
 }
@@ -386,21 +393,20 @@ on_prop_pool() {
   #根据系统存在的prop进行修改
   prop_pool="
   ro.config.low_ram=false
-  persist.sys.mms.bg_apps_limit=114514
+  persist.sys.mms.bg_apps_limit=2147483647
   persist.sys.mms.write_lmkd=false
   persist.sys.mms.camcpt_enable=false
   persist.sys.mms.compact_enable=false
   persist.sys.mms.single_compact_enable=false
   persist.sys.mms.min_zramfree_kb=2147483647
   persist.miui.miperf.enable=false
-  ro.vendor.qti.sys.fw.bservice_limit=114514
-  persist.device_config.activity_manager.max_cached_processes=114514
+  ro.config.per_app_memcg=false
+  ro.vendor.qti.sys.fw.bservice_limit=2147483647
+  persist.device_config.activity_manager.max_cached_processes=2147483647
   persist.sys.spc.enabled=false
   persist.sys.spc.extra_free_enable=false
   persist.sys.spc.screenoff_kill_enable=false
-  ro.config.per_app_memcg=false
-  persist.sys.fuse.passthrough.enable=true
-  persist.sys.usap_pool_enabled=true
+  persist.sys.spc.pressure.enable=false
   ro.lmk.use_minfree_levels=false
   ro.lmk.debug=false
   ro.lmk.thrashing_limit=100
@@ -422,7 +428,6 @@ on_prop_pool() {
   persist.sys.lmk.camera.mem_reclaim=false
   persist.sys.lmk.reportkills=false
   sys.lmk.reportkills=0
-  vendor.sys.vm.swaplow=5
   ro.lmk.swap_util_max=100
   persist.sys.spc.kill.proc.enable=false
   persist.sys.miui.camera.boost.enable=false
@@ -440,23 +445,22 @@ on_prop_pool() {
   persist.sys.debug.enable_scout_memory_monitor=false
   persist.sys.debug.enable_scout_memory_resume=false
   persist.sys.miui.adj_swap_free_percentage.enable=false
+  persist.sys.oppo.junkmonitor=false
   vendor.sys.vm.killtimeout=500
-  ro.sys.fw.bg_apps_limit=114514
-  ro.vendor.qti.sys.fw.bg_apps_limit=114514
+  ro.sys.fw.bg_apps_limit=2147483647
+  ro.vendor.qti.sys.fw.bg_apps_limit=2147483647
+  persist.sys.oplus.nandswap=false
   persist.sys.oplus.lmkd_super_critical_threshold_12g=0
   persist.sys.oplus.lmkd_super_critical_threshold_16g=0
   persist.sys.oplus.lmkd_super_critical_threshold_8g=0
-  ro.sys.fw.empty_app_percent=0
+  persist.sys.oplus.wmark_extra_free_kbytes_12g=0
+  persist.sys.oplus.wmark_extra_free_kbytes_8g=0
+  ro.sys.fw.empty_app_percent=100
   persist.vendor.qti.memory.enable=false
   persist.vendor.sys.memplus.enable=false
   persist.vendor.qti.memory.fooI=false
-  vendor.iop.enable_uxe=1
   vendor.debug.enable.lm=false
-  vendor.perf.iop_v3.enable=true
-  vendor.enable.prefetch=true
-  vendor.iop.enable_prefetch_ofr=true
-  vendor.iop.enable_speed=true
-  ro.vendor.qti.sys.fw.bservice_age=900000
+  ro.vendor.qti.sys.fw.bservice_age=2147483647
   ro.vendor.perf.enable.prekill=false
   vendor.prekill_MIN_ADJ_to_Kill=1001
   vendor.prekill_MAX_ADJ_to_Kill=1001
@@ -466,33 +470,49 @@ on_prop_pool() {
   ro.lmk.kill_timeout_ms_dup=500
   ro.lmk.thrashing_threshold=100
   ro.lmk.thrashing_decay=10
-  ro.lmk.nstrat_low_swap=0
   ro.lmk.nstrat_psi_partial_ms=600
   ro.lmk.nstrat_psi_complete_ms=900
   ro.lmk.nstrat_psi_scrit_complete_stall_ms=1000
   ro.lmk.nstrat_wmark_boost_factor=0
   ro.lmk.enable_watermark_check=false
   ro.lmk.enable_preferred_apps=false
-  vendor.appcompact.enable_app_compact=false
-  ro.vendor.qti.sys.fw.empty_app_percent=0
+  ro.vendor.qti.sys.fw.empty_app_percent=100
   ro.lmk.enable_userspace_lmk=false
   vendor.perf.phr.enable=0
-  ro.vendor.iocgrp.config=1
   ro.lmk.super_critical=1001
   ro.lmk.direct_reclaim_pressure=100
-  ro.lmk.reclaim_scan_threshold=1024
-  ro.vendor.qti.am.reschedule_service=false"
+  ro.lmk.reclaim_scan_threshold=0
+  ro.vendor.qti.am.reschedule_service=true"
   #  old_prop
   #  ro.sys.fw.use_trim_settings=false
-  #  用于控制 OnePlus 手机中 UFS 存储器的 SWAP（交换分区）设置。
-  #  persist.sys.oplus.nandswap=false
   #  用于控制后台服务（Background Service）的启用和禁用。
   #  ro.vendor.qti.sys.fw.bservice_enable=false
+  #  指定了在低内存情况下，LMKD将使用的最小交换空间大小。
+  #  ro.lmk.nstrat_low_swap=0
+  #  启用 I/O 性能引擎（I/O Performance Engine）的用户体验增强功能。
+  #  启用预取（Prefetch）技术，可以在应用程序启动前预先加载相关资源，提高应用程序响应速度。
+  #  vendor.iop.enable_uxe=1
+  #  vendor.perf.iop_v3.enable=true
+  #  vendor.enable.prefetch=true
+  #  vendor.iop.enable_prefetch_ofr=true
+  #  vendor.iop.enable_speed=true
+  #  ro.vendor.iocgrp.config=1
+  #  用于控制系统是否启用 per-app memcg（Memory Control Group）内存管理机制。
+  #  ro.config.per_app_memcg=false
+  #  FUSE 文件系统传递机制是一种将文件系统操作转发到用户空间进行处理的技术，在某些情况下可以提高系统的性能和稳定性。
+  #  USAP 进程池机制是一种通过复用进程来减少应用程序启动时间和内存占用的技术。
+  #  persist.sys.fuse.passthrough.enable=true
+  #  persist.sys.usap_pool_enabled=true
+  #  指定了可用 swap 分区空间较小时的百分比阈值，即当可用 swap 分区空间低于该阈值时，内核将开始使用 swap 机制。
+  #  vendor.sys.vm.swaplow=5
+  #  它允许开发人员在旧版本的Android设备上实现与最新Android API兼容的用户界面。
+  #  vendor.appcompact.enable_app_compact=false
   echo "- [i]:开始进行prop参数修改"
   [[ -f "$huanchen"/Prop_on ]] && prop_on=$(cat "$huanchen"/Prop_on)
   {
     [[ $prop_on == 0 ]] && {
       echo "- [!]:为了完全生效请再重启一次"
+      let record++
       echo "vtools.swap.controller=module" >"$huanchen"/system.prop
       for p in $prop_pool; do
         check_prop=$(echo "$p" | cut -d '=' -f1)
@@ -554,10 +574,11 @@ stop_services() {
     }
   }
   echo "- [i]:正在处理无用系统服务"
+  stopd slad
   stopd oplus_kevents
-  stopd vendor.xiaomi.hidl.minet
-  stopd vendor.xiaomi.hidl.miwill
   stopd vendor_tcpdump
+  stopd miuibooster
+  stopd sla-service-hal-1-0
   [[ $(getprop Build.BRAND) == "MTK" ]] && {
     stopd aee.log-1-1
     stopd charge_logger
@@ -567,29 +588,28 @@ stop_services() {
   }
 }
 
+#绑定模组
+binding_mod() {
+  for i in $(pgrep "$1"); do
+    taskset -p "$2" "$i" &>/dev/null
+    renice "$3" -p "$i" &>/dev/null
+  done
+}
+
 #进程绑定
-set_kswap_task() {
+thread_binding() {
   #绑定进程
   kswapd_cpus=11110000
   mask=$(echo "obase=16;$((2#$kswapd_cpus))" | bc)
-  for i in $(pgrep kswapd); do
-    taskset -p "$mask" "$i" &>/dev/null
-    renice "-10" -p "$i" &>/dev/null
-  done
+  binding_mod kswapd "$mask" -10
   echo "- [i]:设置kswapd线程成功"
 
   kswapd_cpusd=00001111
   maskd=$(echo "obase=16;$((2#$kswapd_cpusd))" | bc)
-  for a in $(pgrep oom_reaper); do
-    taskset -p "$maskd" "$a" &>/dev/null
-    renice "-6" -p "$a" &>/dev/null
-  done
+  binding_mod oom_reaper "$maskd" -6
   echo "- [i]:设置oom_reaper线程成功"
 
-  for b in $(pgrep lmkd); do
-    taskset -p "$maskd" "$b" &>/dev/null
-    renice "-6" -p "$b" &>/dev/null
-  done
+  binding_mod lmkd "$maskd" -6
   echo "- [i]:设置lmkd线程成功"
 }
 
@@ -623,7 +643,71 @@ hot_patch() {
   }
 }
 
-echo "---------------------------------------------------------------------------"
+#删除冲突文件
+scene_delete() {
+  ksu="/data/adb/ksu/modules"
+  magisk="/data/adb/modules"
+  check="
+  $ksu/scene_swap_controller
+  $ksu/swap_controller
+  $magisk/scene_swap_controller
+  $magisk/swap_controller
+  /data/adb/swap_controller/
+  /data/swap_recreate
+  /data/swapfile*"
+  for t in $check; do
+    [[ -d $t ]] && rm -rf "$t" && echo "- [!]:发现冲突已经删除目录:$t" && delete=yes
+  done
+}
+
+#监听音量键
+volume_keys() {
+  timeout=0
+  while :; do
+    sleep 0.5
+    let timeout++
+    [[ $timeout -gt 30 ]] && {
+      Send_notifications "$1" "保后台能力增强模块"
+      break
+    }
+    volume="$(getevent -qlc 1 | awk '{ print $3 }')"
+    case "$volume" in
+    KEY_VOLUMEUP)
+      Send_notifications "$2" "保后台能力增强模块"
+      sleep 10
+      reboot
+      ;;
+    KEY_VOLUMEDOWN)
+      Send_notifications "$3" "保后台能力增强模块"
+      ;;
+    *) continue ;;
+    esac
+    break
+  done
+}
+
+#发出通知
+last_mod() {
+  {
+    [[ $record != "0" ]] && {
+      Send_notifications "提示:为了所有修改完全生效请再重启一次!$(echo -en "\n正在进行音量键监听!")$(echo -en "\n按音量上键自动重启")$(echo -en "\n按音量上键手动重启")" "保后台能力增强模块"
+      volume_keys "注意:超时未检测到音量键，请手动重启!" "注意:即将在10秒后重启!" "注意:已经取消重启，请手动重启!"
+    }
+  } || {
+    [[ $delete == "yes" ]] && {
+      Send_notifications "警告:发现冲突！模块已经自动处理，请再重启一次!$(echo -en "\n正在进行音量键监听!")$(echo -en "\n按音量上键自动重启")$(echo -en "\n按音量上键手动重启")" "保后台能力增强模块"
+      volume_keys "注意:超时未检测到音量键，请手动重启!" "注意:即将在10秒后重启!" "注意:已经取消重启，请手动重启!"
+    }
+  } || {
+    [[ $ksu_check == "true" ]] && {
+      time=$(date "+%Y年%m月%d日_%H时%M分%S秒")
+      Send_notifications "$(echo -en "保后台模块成功启动!")$(echo -en "注意！正在使用ksu，模块功能受限！")$(echo -en "\n启动时间:$time")$(echo -en "\n设置压缩模式:$tt")$(echo -en "\n设置ZRAM大小:$pk")" "保后台能力增强模块"
+    }
+  } || {
+    time=$(date "+%Y年%m月%d日_%H时%M分%S秒")
+    Send_notifications "$(echo -en "保后台模块成功启动!")$(echo -en "\n启动时间:$time")$(echo -en "\n设置压缩模式:$tt")$(echo -en "\n设置ZRAM大小:$pk")" "保后台能力增强模块"
+  }
+}
 
 #赋权
 {
@@ -635,12 +719,16 @@ echo "--------------------------------------------------------------------------
 
 #开始执行方法
 {
+  scene_delete
   set_zram
   set_vm_params
   other_setting
   on_prop_pool
   stop_services
-  set_kswap_task
+  thread_binding
   close_miui
   hot_patch
+  sleep 10 && {
+    last_mod
+  }
 }

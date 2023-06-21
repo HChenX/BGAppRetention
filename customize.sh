@@ -8,7 +8,7 @@ swaps="$MODPATH/swap/swap.ini"
 Output() {
   echo "$@"
   #输出随机时间
-  sleep "$(echo "scale=3; $RANDOM/32768*0.15" | bc -l)"
+  sleep "$(echo "scale=3; $RANDOM/32768*0.2" | bc -l)"
 }
 
 #获取路径
@@ -153,7 +153,7 @@ Athena_close() {
       while :; do
         sleep 0.5
         #超时自动退出
-        timeout=$((timeout + 1))
+        let timeout++
         [[ $timeout -gt 2 ]] && {
           Output "- [!]:超时未检测到音量键，请重试！"
           echo "
@@ -230,17 +230,11 @@ Other_mode() {
     check_result2=$(echo "$zram" | grep zstd)
     check_result3=$(echo "$zram" | grep lzo-rle)
     {
-      [[ "$check_result1" != "" ]] && {
-        comp_algorithm=lz4
-      }
+      [[ "$check_result1" != "" ]] && comp_algorithm=lz4
     } || {
-      [[ "$check_result2" != "" ]] && {
-        comp_algorithm=zstd
-      }
+      [[ "$check_result2" != "" ]] && comp_algorithm=zstd
     } || {
-      [[ "$check_result3" != "" ]] && {
-        comp_algorithm=lzo-rle
-      }
+      [[ "$check_result3" != "" ]] && comp_algorithm=lzo-rle
     } || {
       comp_algorithm=lzo
     }

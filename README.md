@@ -19,7 +19,7 @@
 
 ### Update Log:
 
-#### The latest version is: Background_retention39
+#### The latest version is: Background_retention40
 
 - Added cloud updates via Github.
 - Add the function of stopping useless services.
@@ -32,6 +32,7 @@
 - Modified the prop writing method and added some prop modifications.
 - Added more judgments and improved the level of detailed log output.
 - Modified the `README.md` file to make it more consistent with the format and more beautiful.
+- Add intelligent notification and reminder function to provide a more intuitive understanding of module operation.
 
 ### Modification Log:
 
@@ -90,7 +91,7 @@
 
 > Please judge whether to install it yourself!
 
-## Update time: June 02, 2023, 14:30
+## Update time: June 21, 2023, 00:43
 
 # 中文
 
@@ -111,7 +112,7 @@
 
 ### 更新日志:
 
-#### 最新版本为:保后台39
+#### 最新版本为:保后台40
 
 - 加入Github云更新。
 - 加入停止无用服务的功能。
@@ -124,6 +125,7 @@
 - 修改prop写入方法，新增部分prop修改。
 - 添加更多判断，完善日志输出详细程度。
 - 修改`Readme.md`文件，更符合格式更美观。
+- 加入智能通知提醒功能，更直观了解模块运行情况。
 
 ### 改动日志:
 
@@ -180,4 +182,4 @@
 
 > 请自行判断是否安装刷入！
 
-## 更新时间:2023.06.02 14:30
+## 更新时间:2023.06.21 00:43
