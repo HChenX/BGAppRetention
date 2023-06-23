@@ -329,7 +329,7 @@ other_setting() {
   {
     [[ $ksu_check != "true" ]] && {
       qcom_folder="$huanchen/system/vendor/etc/perf/"
-      qcom_now_file="$huanchen/sysyem$qcom_file"
+      qcom_now_file="$huanchen/system$qcom_file"
     }
   } || {
     qcom_folder="$huanchen/vendor/etc/perf/"
