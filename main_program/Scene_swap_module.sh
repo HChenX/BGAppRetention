@@ -2,9 +2,8 @@
 huanchen=${0%/*}
 huanchen=${huanchen//\/main_program/}
 sdk=$(getprop ro.system.build.version.sdk)
-origin_file="/system/vendor/etc/perf/perfconfigstore.xml"
-origin_folder="$huanchen/system/vendor/etc/perf/"
-overlay_file="$huanchen$origin_file"
+magiskpolicy --live "allow system_server * * *"
+ksu_check=false
 record=0
 
 #检查是否为ksu
@@ -76,8 +75,8 @@ set_value() {
 #修改高通文件
 update_overlay() {
   {
-    sed -i "s/Name=\"$1\" Value=\".*\"/Name=\"$1\" Value=\"$2\"/" "$overlay_file" && {
-      grep -q "<Prop Name=\"$1\" Value=\"$2\" />" "$overlay_file"
+    sed -i "s/\(Name=\"$1\"[[:blank:]]*Value=\"\)[^\"]*\(\"\)/\1$2\2/g" "$qcom_now_file" && {
+      grep -q "Name=\"$1\"[[:blank:]]*Value=\"$2\"" "$qcom_now_file"
     }
   } && {
     echo "$1=$2" >>"$huanchen"/Qualcomm
@@ -85,7 +84,7 @@ update_overlay() {
 }
 
 #发送状态栏通知
-Send_notifications() {
+send_notifications() {
   local text=$1
   local title=$2
   local author=2000
@@ -103,9 +102,6 @@ echo "--------------------------------------------------------------------------
 
 #设置zram
 set_zram() {
-
-  [[ $ksu_check == "true" ]] && echo "- [!]:注意！正在使用ksu，模块功能受限"
-
   [[ ! -e /dev/block/zram0 ]] && {
     {
       [[ -e /sys/class/zram-control ]] && {
@@ -161,7 +157,7 @@ set_zram() {
   echo "- [i]:正在设置压缩模式"
   echo "$comp_algorithm" >/sys/class/block/zram0/comp_algorithm
   tt=$(cat /sys/class/block/zram0/comp_algorithm)
-  ttt=$(echo "$tt" | sed 's/\[//g' | sed 's/]//g' | sed 's/ /\n/g' | grep "$comp_algorithm")
+  ttt=$(echo "$tt" | sed 's/\[//g' | sed 's/]//g' | sed 's/ /\n/g' | grep -w "$comp_algorithm")
   [[ $comp_algorithm == "$ttt" ]] && echo "- [i]:目标设置为:$comp_algorithm,实际设置为:$ttt"
   [[ $comp_algorithm != "$ttt" ]] && echo "- [!]:目标设置为:$comp_algorithm,实际设置为:$ttt"
 
@@ -301,89 +297,100 @@ other_setting() {
   }
 
   #检查是否存在指定文件
-  [[ $ksu_check != "true" ]] && {
-    [[ -f /system/system_ext/etc/camerabooster.json ]] && {
-      {
-        [[ ! -f "$huanchen/system/system_ext/etc/camerabooster.json" ]] && {
-          echo "- [i]:已优化相机杀后台问题"
-          echo "- [!]:为了完全生效请再重启一次"
-          let record++
-          mkdir -p "$huanchen/system/system_ext/etc/"
-          cp -f "/system/system_ext/etc/camerabooster.json" "$huanchen/system/system_ext/etc/"
-          sed -i 's/"cam_boost_enable": true/"cam_boost_enable": false/g' "$huanchen/system/system_ext/etc/camerabooster.json"
-        }
-      } || {
+  camera_file="/system/system_ext/etc/camerabooster.json"
+  {
+    [[ $ksu_check != "true" ]] && {
+      camera_folder="$huanchen/system/system_ext/etc/"
+      camera_now_file="$huanchen/system/system_ext/etc/camerabooster.json"
+    }
+  } || {
+    camera_folder="$huanchen/system_ext/etc/"
+    camera_now_file="$huanchen/system_ext/etc/camerabooster.json"
+  }
+  [[ -f $camera_file ]] && {
+    {
+      [[ ! -f $camera_now_file ]] && {
         echo "- [i]:已优化相机杀后台问题"
+        echo "- [!]:为了完全生效请再重启一次"
+        let record++
+        mkdir -p "$camera_folder"
+        cp -f "$camera_file" "$camera_folder"
+        sed -i 's/"cam_boost_enable": true/"cam_boost_enable": false/g' "$camera_now_file"
       }
+    } || {
+      {
+        [[ $(du -k "$camera_now_file" | cut -f1) -ne 0 ]] && { echo "- [i]:已优化相机杀后台问题"; }
+      } || { echo "- [!]:修改后相机配置文件为空"; }
     }
   }
 
   #高通专用修改
-  [[ $ksu_check != "true" ]] && {
-    [[ "$(getprop ro.hardware)" == "qcom" ]] && {
-      {
-        [[ -f $origin_file ]] && [[ $(du -k "$origin_file" | cut -f1) -ne 0 ]] && {
-          {
-            [[ ! -f $overlay_file ]] && {
-              mkdir -p "$origin_folder"
-              {
-                ! cp -f "$origin_file" "$origin_folder"
-              } && {
-                echo "- [!]:复制高通专改关键文件失败"
-              } || {
-                touch "$huanchen"/Qualcomm
-                update_overlay vendor.debug.enable.lm false
-                update_overlay ro.vendor.qti.sys.fw.bservice_age 2147483647
-                update_overlay ro.vendor.qti.sys.fw.bservice_limit 2147483647
-                update_overlay ro.vendor.perf.enable.prekill false
-                update_overlay vendor.prekill_MIN_ADJ_to_Kill 1001
-                update_overlay vendor.prekill_MAX_ADJ_to_Kill 1001
-                update_overlay vendor.debug.enable.memperfd false
-                update_overlay ro.lmk.thrashing_limit_pct_dup 100
-                update_overlay ro.lmk.kill_heaviest_task_dup false
-                update_overlay ro.lmk.kill_timeout_ms_dup 500
-                update_overlay ro.lmk.thrashing_threshold 100
-                update_overlay ro.lmk.thrashing_decay 10
-                update_overlay ro.lmk.nstrat_psi_partial_ms 600
-                update_overlay ro.lmk.nstrat_psi_complete_ms 900
-                update_overlay ro.lmk.nstrat_psi_scrit_complete_stall_ms 1000
-                update_overlay ro.lmk.nstrat_wmark_boost_factor 0
-                update_overlay ro.lmk.enhance_batch_kill false
-                update_overlay ro.lmk.enable_watermark_check false
-                update_overlay ro.lmk.enable_preferred_apps false
-                update_overlay ro.vendor.qti.sys.fw.bg_apps_limit 2147483647
-                update_overlay ro.vendor.qti.sys.fw.empty_app_percent 100
-                update_overlay ro.lmk.enable_userspace_lmk false
-                update_overlay vendor.perf.phr.enable 0
-                update_overlay ro.lmk.super_critical 1001
-                update_overlay ro.lmk.direct_reclaim_pressure 100
-                update_overlay ro.lmk.reclaim_scan_threshold 0
-                update_overlay ro.vendor.qti.am.reschedule_service true
-                update_overlay ro.lmk.nstrat_low_swap 0
-                #update_overlay ro.vendor.iocgrp.config 1
-                #update_overlay vendor.iop.enable_prefetch_ofr true
-                #update_overlay vendor.iop.enable_speed true
-                #update_overlay vendor.enable.prefetch true
-                #update_overlay vendor.perf.iop_v3.enable true
-                #update_overlay vendor.iop.enable_uxe 1
-                #update_overlay ro.vendor.qti.sys.fw.bservice_enable false
-                #update_overlay ro.vendor.qti.config.zram false
-                #update_overlay ro.vendor.qti.config.swap false
-                #update_overlay vendor.appcompact.enable_app_compact false
-                echo "- [i]:成功执行高通专改"
-                echo "- [!]:为了完全生效请再重启一次"
-                let record++
-              }
-            }
-          } || {
-            [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
-              echo "- [i]:成功执行高通专改"
-            }
+  qcom_file="/vendor/etc/perf/perfconfigstore.xml"
+  {
+    [[ $ksu_check != "true" ]] && {
+      qcom_folder="$huanchen/system/vendor/etc/perf/"
+      qcom_now_file="$huanchen/sysyem$qcom_file"
+    }
+  } || {
+    qcom_folder="$huanchen/vendor/etc/perf/"
+    qcom_now_file="$huanchen$qcom_file"
+  }
+  [[ "$(getprop ro.hardware)" == "qcom" ]] && {
+    {
+      [[ -f $qcom_file ]] && [[ $(du -k "$qcom_file" | cut -f1) -ne 0 ]] && {
+        {
+          [[ ! -f $qcom_now_file ]] && {
+            mkdir -p "$qcom_folder"
+            cp -f "$qcom_file" "$qcom_folder"
+            touch "$huanchen"/Qualcomm
+            update_overlay vendor.debug.enable.lm false
+            update_overlay ro.vendor.qti.sys.fw.bservice_age 2147483647
+            update_overlay ro.vendor.qti.sys.fw.bservice_limit 2147483647
+            update_overlay ro.vendor.perf.enable.prekill false
+            update_overlay vendor.prekill_MIN_ADJ_to_Kill 1001
+            update_overlay vendor.prekill_MAX_ADJ_to_Kill 1001
+            update_overlay vendor.debug.enable.memperfd false
+            update_overlay ro.lmk.thrashing_limit_pct_dup 100
+            update_overlay ro.lmk.kill_heaviest_task_dup false
+            update_overlay ro.lmk.kill_timeout_ms_dup 500
+            update_overlay ro.lmk.thrashing_threshold 100
+            update_overlay ro.lmk.thrashing_decay 10
+            update_overlay ro.lmk.nstrat_psi_partial_ms 600
+            update_overlay ro.lmk.nstrat_psi_complete_ms 900
+            update_overlay ro.lmk.nstrat_psi_scrit_complete_stall_ms 1000
+            update_overlay ro.lmk.nstrat_wmark_boost_factor 0
+            update_overlay ro.lmk.enhance_batch_kill false
+            update_overlay ro.lmk.enable_watermark_check false
+            update_overlay ro.lmk.enable_preferred_apps false
+            update_overlay ro.vendor.qti.sys.fw.bg_apps_limit 2147483647
+            update_overlay ro.vendor.qti.sys.fw.empty_app_percent 100
+            update_overlay ro.lmk.enable_userspace_lmk false
+            update_overlay vendor.perf.phr.enable 0
+            update_overlay ro.lmk.super_critical 1001
+            update_overlay ro.lmk.direct_reclaim_pressure 100
+            update_overlay ro.lmk.reclaim_scan_threshold 0
+            update_overlay ro.vendor.qti.am.reschedule_service true
+            update_overlay ro.lmk.nstrat_low_swap 0
+            #update_overlay ro.vendor.iocgrp.config 1
+            #update_overlay vendor.iop.enable_prefetch_ofr true
+            #update_overlay vendor.iop.enable_speed true
+            #update_overlay vendor.enable.prefetch true
+            #update_overlay vendor.perf.iop_v3.enable true
+            #update_overlay vendor.iop.enable_uxe 1
+            #update_overlay ro.vendor.qti.sys.fw.bservice_enable false
+            #update_overlay ro.vendor.qti.config.zram false
+            #update_overlay ro.vendor.qti.config.swap false
+            #update_overlay vendor.appcompact.enable_app_compact false
+            echo "- [i]:成功执行高通专改"
+            echo "- [!]:为了完全生效请再重启一次"
+            let record++
           }
+        } || {
+          echo "- [i]:成功执行高通专改"
         }
-      } || {
-        echo "- [!]:源文件为空，无法进行高通专改"
       }
+    } || {
+      echo "- [!]:源文件为空，无法进行高通专改"
     }
   }
 }
@@ -552,9 +559,12 @@ on_prop_pool() {
   echo "- [i]:修改prop参数完毕"
 
   #显示对高通的修改
+  [[ -f $qcom_now_file ]] && [[ $(du -k "$huanchen/Qualcomm" | cut -f1) -eq 0 ]] && {
+    echo "- [!]:修改后高通配置文件为空"
+  }
   [[ -f "$huanchen"/Qualcomm ]] && {
     {
-      [[ $(du -k "$overlay_file" | cut -f1) -ne 0 ]] && {
+      [[ $(du -k "$huanchen/Qualcomm" | cut -f1) -ne 0 ]] && {
         echo "- [i]:读取高通专改内容"
         cat "$huanchen"/Qualcomm
       }
@@ -667,18 +677,18 @@ volume_keys() {
     sleep 0.5
     let timeout++
     [[ $timeout -gt 30 ]] && {
-      Send_notifications "$1" "保后台能力增强模块"
+      send_notifications "$1" "保后台能力增强模块"
       break
     }
     volume="$(getevent -qlc 1 | awk '{ print $3 }')"
     case "$volume" in
     KEY_VOLUMEUP)
-      Send_notifications "$2" "保后台能力增强模块"
+      send_notifications "$2" "保后台能力增强模块"
       sleep 10
       reboot
       ;;
     KEY_VOLUMEDOWN)
-      Send_notifications "$3" "保后台能力增强模块"
+      send_notifications "$3" "保后台能力增强模块"
       ;;
     *) continue ;;
     esac
@@ -690,22 +700,17 @@ volume_keys() {
 last_mod() {
   {
     [[ $record != "0" ]] && {
-      Send_notifications "提示:为了所有修改完全生效请再重启一次!$(echo -en "\n正在进行音量键监听!")$(echo -en "\n按音量上键自动重启")$(echo -en "\n按音量上键手动重启")" "保后台能力增强模块"
+      send_notifications "提示:为了所有修改完全生效请再重启一次!$(echo -en "\n正在进行音量键监听!")$(echo -en "\n按音量上键自动重启")$(echo -en "\n按音量上键手动重启")" "保后台能力增强模块"
       volume_keys "注意:超时未检测到音量键，请手动重启!" "注意:即将在10秒后重启!" "注意:已经取消重启，请手动重启!"
     }
   } || {
     [[ $delete == "yes" ]] && {
-      Send_notifications "警告:发现冲突！模块已经自动处理，请再重启一次!$(echo -en "\n正在进行音量键监听!")$(echo -en "\n按音量上键自动重启")$(echo -en "\n按音量上键手动重启")" "保后台能力增强模块"
+      send_notifications "警告:发现冲突！模块已经自动处理，请再重启一次!$(echo -en "\n正在进行音量键监听!")$(echo -en "\n按音量上键自动重启")$(echo -en "\n按音量上键手动重启")" "保后台能力增强模块"
       volume_keys "注意:超时未检测到音量键，请手动重启!" "注意:即将在10秒后重启!" "注意:已经取消重启，请手动重启!"
     }
   } || {
-    [[ $ksu_check == "true" ]] && {
-      time=$(date "+%Y年%m月%d日_%H时%M分%S秒")
-      Send_notifications "$(echo -en "保后台模块成功启动!")$(echo -en "注意！正在使用ksu，模块功能受限！")$(echo -en "\n启动时间:$time")$(echo -en "\n设置压缩模式:$tt")$(echo -en "\n设置ZRAM大小:$pk")" "保后台能力增强模块"
-    }
-  } || {
     time=$(date "+%Y年%m月%d日_%H时%M分%S秒")
-    Send_notifications "$(echo -en "保后台模块成功启动!")$(echo -en "\n启动时间:$time")$(echo -en "\n设置压缩模式:$tt")$(echo -en "\n设置ZRAM大小:$pk")" "保后台能力增强模块"
+    send_notifications "$(echo -en "保后台模块成功启动!")$(echo -en "\n启动时间:$time")$(echo -en "\n设置压缩模式:$tt")$(echo -en "\n设置ZRAM大小:$pk")" "保后台能力增强模块"
   }
 }
 

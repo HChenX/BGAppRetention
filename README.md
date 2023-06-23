@@ -19,34 +19,35 @@
 
 ### Update Log:
 
-#### The latest version is: Background_retention40
+#### Latest Version:Background_retention40
 
-- Added cloud updates via Github.
-- Add the function of stopping useless services.
-- Fixed error codes and improved optimization codes.
-- Fixed occasional failures of removing KuaiBa and Athena.
-- Rolled back some modifications and restored some unreasonable operations.
-- Removed some unnecessary functions and streamlined the code.
-- Added new features and made special modifications for Qualcomm.
-- Replaced the hard replacement of files with dynamic modification of file content.
-- Modified the prop writing method and added some prop modifications.
-- Added more judgments and improved the level of detailed log output.
-- Modified the `README.md` file to make it more consistent with the format and more beautiful.
-- Add intelligent notification and reminder function to provide a more intuitive understanding of module operation.
+- Added Github cloud update.
+- Fixed some bugs and re-supported KSU.
+- Added the function of stopping part of system services.
+- Added new features for special modifications for Qualcomm.
+- Removed hard replacement files and changed to dynamically modify file content.
+- Fixed occasional problems with removing Quick Charge and Athena failures.
+- Modified the prop writing method and added/deleted some prop modifications.
+- Added more judgments and improved the level of detail in the log output.
+- Modified `Readme.md` file to better conform to format and appearance.
+- Added intelligent notification reminder function to more intuitively understand the module running situation.
 
-### Modification Log:
+### Change Log:
 
-- Deleted a large number of functions such as write-back.
-- Fixed error codes and optimized code.
-- Added and improved support for KSU in the module.
-- All hard links in the module are converted to soft links to improve compatibility.
-- Modified the module parameter setting method to achieve comprehensive automatic setting modification.
-- Redefined the ZRAM size and dynamically set it for different memory devices.
-- Added functions to remove Android system process restrictions and virtual process restrictions.
-- Added targeted prop modifications for MIUI to prevent killing background apps as much as possible.
-- Added more optimizations and modifications for lmk parameters, IO scheduling, and prop parameters.
-- Added functions to remove Athena and MediaTek KuaiBa, and added an additional LSP module.
-- `Additional Module: Don.t.kill Author: @海浪逃向岛屿 has obtained authorization.`
+- Deleted a lot of functions such as writing back.
+- Corrected error codes and optimized code.
+- Added and improved support for KSU modules.
+- Added more judgments and improved the level of detail in the log output.
+- Added targeted modifications for Qualcomm to enhance the ability to keep processes running in the background.
+- Converted all hard links inside the module to soft links to improve module compatibility.
+- Added intelligent notification reminder function to more intuitively understand the module running situation.
+- Changed the way module parameters are set to achieve comprehensive automation of settings and modifications.
+- Redefined the size of ZRAM and dynamically set it for different memory devices.
+- Added the function of releasing Android system process restrictions and virtual process restrictions.
+- Added targeted prop modifications for MIUI to prevent background killing as much as possible.
+- Added more optimizations for lmk parameters, io scheduling, and prop parameters.
+- Added the function of removing Athena and MediaTek Quick Charge, and added an additional LSP module.
+- `Additional Module: Don.t.kill Author: @海浪逃向岛屿 has been authorized.`
 
 ### Module Authors:
 
@@ -91,7 +92,7 @@
 
 > Please judge whether to install it yourself!
 
-## Update time: June 21, 2023, 00:43
+## Update time: June 23, 2023, 22:00
 
 # 中文
 
@@ -115,14 +116,12 @@
 #### 最新版本为:保后台40
 
 - 加入Github云更新。
-- 加入停止无用服务的功能。
-- 修正错误代码，完善优化代码。
-- 修复偶发性去除快霸和雅典娜失效的问题。
-- 滚回部分修改，还原一些不合理的操作。
-- 去除部分无用功能，精简代码。
+- 修复部分Bug，重新支持KSU。
+- 加入停止部分系统服务的功能。
 - 添加新功能，针对高通进行特殊修改。
 - 去除硬替换文件，改为动态修改文件内容。
-- 修改prop写入方法，新增部分prop修改。
+- 修复偶发性去除快霸和雅典娜失效的问题。
+- 修改prop写入方法，增减部分prop修改。
 - 添加更多判断，完善日志输出详细程度。
 - 修改`Readme.md`文件，更符合格式更美观。
 - 加入智能通知提醒功能，更直观了解模块运行情况。
@@ -131,8 +130,11 @@
 
 - 删除了回写等大量功能。
 - 修正错误代码，优化代码。
-- 添加并完善模块对ksu的支持。
+- 添加并完善模块对KSU的支持。
+- 添加更多判断，完善日志输出详细程度。
+- 加入对高通的针对性修改，提升保后台能力。
 - 模块内所有硬链接转为软链接，提高模块兼容性。
+- 加入智能通知提醒功能，更直观了解模块运行情况。
 - 修改模块参数设置方式，实现全面自动化设置修改。
 - 重新定义ZRAM大小，针对不同内存设备动态设置。
 - 加入解除安卓系统进程限制和虚进程限制的功能。
@@ -182,4 +184,4 @@
 
 > 请自行判断是否安装刷入！
 
-## 更新时间:2023.06.21 00:43
+## 更新时间:2023.06.23 20:00
