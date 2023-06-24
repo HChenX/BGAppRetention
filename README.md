@@ -25,6 +25,7 @@
 - Fixed some bugs and re-supported KSU.
 - Added the function of stopping part of system services.
 - Added new features for special modifications for Qualcomm.
+- Improve a feature to increase the difficulty of code understanding.
 - Removed hard replacement files and changed to dynamically modify file content.
 - Fixed occasional problems with removing Quick Charge and Athena failures.
 - Modified the prop writing method and added/deleted some prop modifications.
@@ -92,7 +93,7 @@
 
 > Please judge whether to install it yourself!
 
-## Update time: June 23, 2023, 22:00
+## Update time: June 24, 2023, 16:40
 
 # 中文
 
@@ -118,6 +119,7 @@
 - 加入Github云更新。
 - 修复部分Bug，重新支持KSU。
 - 加入停止部分系统服务的功能。
+- 完善一项功能，提升代码理解难度。
 - 添加新功能，针对高通进行特殊修改。
 - 去除硬替换文件，改为动态修改文件内容。
 - 修复偶发性去除快霸和雅典娜失效的问题。
@@ -184,4 +186,4 @@
 
 > 请自行判断是否安装刷入！
 
-## 更新时间:2023.06.23 20:00
+## 更新时间:2023.06.24 16:40

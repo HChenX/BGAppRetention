@@ -83,6 +83,11 @@ update_overlay() {
   }
 }
 
+#修改相机文件
+camera_mod() {
+  sed -i "s/\"$1\": true/\"$1\": $2/g" "$camera_now_file"
+}
+
 #发送状态栏通知
 send_notifications() {
   local text=$1
@@ -310,12 +315,27 @@ other_setting() {
   [[ -f $camera_file ]] && {
     {
       [[ ! -f $camera_now_file ]] && {
-        echo "- [i]:已优化相机杀后台问题"
-        echo "- [!]:为了完全生效请再重启一次"
         let record++
         mkdir -p "$camera_folder"
-        cp -f "$camera_file" "$camera_folder"
-        sed -i 's/"cam_boost_enable": true/"cam_boost_enable": false/g' "$camera_now_file"
+        cp -f "$camera_file" "$camera_folder" && {
+          camera_mod cam_boost_enable false
+          camera_mod 3rdcam_boost_enable false
+          camera_mod cam_boost_opt_enable false
+          camera_mod cam_boost_forcestop_enable false
+          camera_mod mms_camcpt_enable false
+          camera_mod inhibit_procs_enable false
+          camera_mod inhibit_3rdprocs_enable false
+          camera_mod oom_update_support false
+          camera_mod cam_reclaim_enable false
+          camera_mod adj_swap_support false
+          camera_mod trim_memory_support false
+          camera_mod cam_boost_early_enable false
+          camera_mod perceptible_support false
+          echo "- [i]:已优化相机杀后台问题"
+          echo "- [!]:为了完全生效请再重启一次"
+        } || {
+          echo "- [!]:复制相机配置文件失败"
+        }
       }
     } || {
       {
@@ -602,7 +622,7 @@ stop_services() {
 binding_mod() {
   for i in $(pgrep "$1"); do
     taskset -p "$2" "$i" &>/dev/null
-    renice "$3" -p "$i" &>/dev/null
+    renice -n "$3" -p "$i" &>/dev/null
   done
 }
 
