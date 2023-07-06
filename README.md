@@ -19,35 +19,35 @@
 
 ### Update Log:
 
-#### Latest Version:Background_retention40
+#### Latest Version:Background_retention_module v.41
 
-- Added Github cloud update.
-- Fixed some bugs and re-supported KSU.
-- Added the function of stopping part of system services.
-- Added new features for special modifications for Qualcomm.
-- Improve a feature to increase the difficulty of code understanding.
-- Removed hard replacement files and changed to dynamically modify file content.
-- Fixed occasional problems with removing Quick Charge and Athena failures.
-- Modified the prop writing method and added/deleted some prop modifications.
-- Added more judgments and improved the level of detail in the log output.
-- Modified `Readme.md` file to better conform to format and appearance.
-- Added intelligent notification reminder function to more intuitively understand the module running situation.
+- Format log output.
+- Join GitHub Cloud Update.
+- Fix some bugs and support KSU again.
+- Improve module functionality and increase code comprehension difficulty.
+- Make special modifications to Qualcomm based on its memory files.
+- Remove the hard replacement file and change to dynamically modify the file content.
+- Fixed the problem of accidental removal of Kuiba and Athena.
+- Modify the write method of the prop and add or remove some prop modifications.
+- Add the function of stopping system services (by the Pandora kernel).
+- Modify the `Readme.md` file to make it more formatted and aesthetically pleasing.
+- Add intelligent notification and reminder function to provide a more intuitive understanding of module operation.
 
 ### Change Log:
 
-- Deleted a lot of functions such as writing back.
-- Corrected error codes and optimized code.
-- Added and improved support for KSU modules.
-- Added more judgments and improved the level of detail in the log output.
-- Added targeted modifications for Qualcomm to enhance the ability to keep processes running in the background.
-- Converted all hard links inside the module to soft links to improve module compatibility.
-- Added intelligent notification reminder function to more intuitively understand the module running situation.
-- Changed the way module parameters are set to achieve comprehensive automation of settings and modifications.
-- Redefined the size of ZRAM and dynamically set it for different memory devices.
-- Added the function of releasing Android system process restrictions and virtual process restrictions.
-- Added targeted prop modifications for MIUI to prevent background killing as much as possible.
-- Added more optimizations for lmk parameters, io scheduling, and prop parameters.
-- Added the function of removing Athena and MediaTek Quick Charge, and added an additional LSP module.
+- Removed functions such as write back.
+- Improve module functionality and optimize code.
+- Add and improve module support for KSU.
+- Add more judgments and format the module's log output.
+- Add targeted modifications to Qualcomm to enhance backend protection capabilities.
+- All Hard link in the module are converted to soft links to improve module compatibility.
+- Add intelligent notification and reminder function to provide a more intuitive understanding of module operation.
+- Modify the module parameter setting method to achieve comprehensive automation of setting and modification.
+- Redefine the size of ZRAM and dynamically set it for different memory devices.
+- Add the ability to lift Android system process restrictions and virtual process restrictions.
+- Add targeted prop modifications to MIUI to prevent background killing as much as possible.
+- Add more optimization modifications to lmk parameters, io scheduling, and prop parameters.
+- Add the function of removing Athena and MediaTek Kuiba, and add the additional LSP module.
 - `Additional Module: Don.t.kill Author: @海浪逃向岛屿 has been authorized.`
 
 ### Module Authors:
@@ -67,6 +67,7 @@
 > - @开心小阳光
 > - @海浪逃向岛屿
 > - @嘟嘟ski
+> - @潘多拉内核团队
 
 ## 3. Conclusion:
 
@@ -93,7 +94,7 @@
 
 > Please judge whether to install it yourself!
 
-## Update time: June 24, 2023, 16:40
+## Update time: July 06, 2023, 14:00
 
 # 中文
 
@@ -114,26 +115,26 @@
 
 ### 更新日志:
 
-#### 最新版本为:保后台40
+#### 最新版本为:保后台模块 v.41
 
+- 格式化日志输出。
 - 加入Github云更新。
 - 修复部分Bug，重新支持KSU。
-- 加入停止部分系统服务的功能。
-- 完善一项功能，提升代码理解难度。
-- 添加新功能，针对高通进行特殊修改。
+- 完善模块功能，提升代码理解难度。
+- 根据高通内存文件，对高通进行特殊修改。
 - 去除硬替换文件，改为动态修改文件内容。
 - 修复偶发性去除快霸和雅典娜失效的问题。
 - 修改prop写入方法，增减部分prop修改。
-- 添加更多判断，完善日志输出详细程度。
+- 加入停止系统服务的功能(by `潘多拉内核`)。
 - 修改`Readme.md`文件，更符合格式更美观。
 - 加入智能通知提醒功能，更直观了解模块运行情况。
 
 ### 改动日志:
 
 - 删除了回写等大量功能。
-- 修正错误代码，优化代码。
+- 完善模块功能，优化代码。
 - 添加并完善模块对KSU的支持。
-- 添加更多判断，完善日志输出详细程度。
+- 添加更多判断，格式化模块日志输出。
 - 加入对高通的针对性修改，提升保后台能力。
 - 模块内所有硬链接转为软链接，提高模块兼容性。
 - 加入智能通知提醒功能，更直观了解模块运行情况。
@@ -162,6 +163,7 @@
 > - @开心小阳光
 > - @海浪逃向岛屿
 > - @嘟嘟ski
+> - @潘多拉内核团队
 
 ## 3.末尾:
 
@@ -186,4 +188,4 @@
 
 > 请自行判断是否安装刷入！
 
-## 更新时间:2023.06.24 16:40
+## 更新时间:2023.07.06 14:00

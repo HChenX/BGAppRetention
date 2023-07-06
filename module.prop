@@ -1,7 +1,7 @@
-id=zram_huanchen
-name=保后台能力增强40
-version=2023.06.24
-versionCode=20230624
-author=焕晨
-description=由`@嘟嘟ski`附加模块二改动而来，进行了大量修改，追求极限保后台！
+id=HChen_Zram
+name=保后台模块v.41
+version=2023.07.06
+versionCode=20230706
+author=焕晨HChen
+description=通过修改内存相关参数达到增强后台留存能力的目的。#Author by @焕晨HChen
 updateJson=https://raw.githubusercontent.com/HChenX/Background_retention/main/HChen.json
