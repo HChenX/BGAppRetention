@@ -4,6 +4,7 @@ HChen=$(echo "${0%/*}" | xargs echo "$(sed 's/\/main_program//g')") && file="/ma
 mod="$HChen$file/HChen_mod.sh" && value="$HChen$file/HChen_value.sh" && name="$HChen$file/HChen_name.sh" && chmod -R 0777 "$HChen"$file/
 { { [[ -f $mod ]] && [[ -f $value ]] && [[ -f $name ]]; } && { . $mod && . $value && . $name; }; } || { echo "- [!]:缺少关键文件" && exit 99; }
 { [[ -f $swap_conf ]] && { . "$swap_conf" && echo "- [i]:配置文件读取成功"; } || { echo "- [!]:配置文件读取异常" && exit 1; }; } || { echo "- [!]: 缺少$swap_conf" && exit 2; }
+{ [[ -f "$bin"/swapon ]] && alias swapon="\$bin/swapon" && alias swapoff="\$bin/swapoff" && alias mkswap="\$bin/mkswap"; } || { [[ -f $vbin/swapon ]] && alias swapon="\$vbin/swapon" && alias swapoff="\$vbin/swapoff" && alias mkswap="\$vbin/mkswap"; }
 echo "---------------------------------------------------------------------------"
 set_zram() {
   [[ ! -e /dev/block/zram0 ]] && { { [[ -e /sys/class/zram-control ]] && echo "- [i]:内核支持ZRAM"; } || { echo "- [!]:内核不支持ZRAM" && return; }; }
@@ -111,10 +112,17 @@ on_prop_pool() {
   [[ -f $qcom_now_file ]] && [[ $(du -k "$HChen/Qualcomm" | cut -f1) -eq 0 ]] && { echo "- [!]:修改后高通配置文件为空"; }
   [[ -f "$HChen"/Qualcomm ]] && { { [[ $(du -k "$HChen/Qualcomm" | cut -f1) -ne 0 ]] && { echo "- [i]:读取高通专改内容" && cat "$HChen"/Qualcomm; }; } || { echo "- [!]:高通专改修改内容为空"; }; }
 }
+other_mod() {
+  [[ $dont_kill == "on" ]] && { echo "- [i]:已成功安装附加模块"; }
+  [[ $close_kuaiba == "on" ]] && { echo "- [i]:已成功处理MTK快霸"; }
+  { [[ $close_athena == "on" ]] && { echo "- [i]:已成功处理OPPO系雅典娜"; }; } || { [[ $close_athena == "off" ]] && echo "- [!]:未处理OPPO系雅典娜"; }
+}
 stop_services() {
-  stopd() { { stop "$1"; } && { echo "- [i]:已停止服务:$1"; }; }
-  echo "- [i]:正在处理无用系统服务"
-  for_mod "$(name_stop)" "stopd" "" "" "" "" ""
+  { [[ $services == "true" ]] && {
+    stopd() { { stop "$1"; } && { echo "- [i]:已停止服务:$1"; }; }
+    echo "- [i]:正在处理无用系统服务"
+    for_mod "$(name_stop)" "stopd" "" "" "" "" ""
+  }; } || { echo "- [!]:未开启处理无用系统服务功能"; }
 }
 thread_binding() {
   other_bin kswapd "$(mask 11110000)" -10
@@ -168,6 +176,7 @@ last_mod() {
   set_vm_params
   other_setting
   on_prop_pool
+  other_mod
   stop_services
   thread_binding
   hot_patch

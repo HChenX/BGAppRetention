@@ -10,6 +10,7 @@ Wait_until_login() {
 }
 Wait_until_login
 magiskpolicy --live "allow system_server * * *"
+{ [[ -f /system/bin/sh ]] && alias sh="/system/bin/sh"; } || { [[ -f /vendor/bin/sh ]] && alias sh="/vendor/bin/sh"; }
 { [[ -f "$HChen/Ksu_ver" ]] && Ver=$(cat "$HChen/Ksu_ver") && mod=Ksu; } || { Ver=$(sed -n "s/^.*MAGISK_VER='\([^']*\)'.*$/\1/p" /data/adb/magisk/util_functions.sh) && mod=Magisk; }
 { [[ -f /sys/devices/soc0/soc_id ]] && cpu="$(cat /sys/devices/soc0/soc_id)"; } || { cpu="$(cat /sys/devices/system/soc/soc0/id)"; }
 time=$(date "+%Y年%m月%d日_%H时%M分%S秒")
@@ -44,6 +45,6 @@ echo "手机品牌:$(getprop ro.product.brand)" >"$Log"
 }; }
 {
   chmod 777 "$HChen"/main_program/HChen_main.sh
-  su -c "$HChen"/main_program/HChen_main.sh 2>/dev/null
+  sh "$HChen"/main_program/HChen_main.sh 2>/dev/null
   echo "---------------------------------------------------------------------------"
 } >>"$Log"

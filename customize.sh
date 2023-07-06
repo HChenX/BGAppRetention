@@ -13,6 +13,7 @@ Get_props() { grep -v '^#' <"$swap_ini" | grep "^$1=" | cut -f2 -d '='; }
 comp_algorithms=$(Get_props comp_algorithm)
 close_kuaiba=$(Get_props close_kuaiba)
 reserve=$(Get_props reserve)
+service=$(Get_props services)
 Delete_cheat() {
   Output "- [i]:欢迎使用本模块(///ω///)"
   Output "- [i]:正在安装改版模块！< (ˉ^ˉ)> "
@@ -106,6 +107,8 @@ Athena_close() {
         Output "- [!]:超时未检测到音量键，请重试！"
         echo "
 #这些标记仅用于为开发者提供信息，自行修改没有效果
+#用于标记是否关闭雅典娜
+close_athena=off
 #---------------------------------------------------------------------------" >>"$swaps"
         break
       }
@@ -156,7 +159,7 @@ close_athena=off
 }
 Other_mode() {
   Output "- [i]:正在检测可用压缩模式！"
-  { [[ $reserve == "true" ]] && { comp_algorithm=$comp_algorithms; }; } || {
+  { [[ $reserve == "true" ]] && { comp_algorithm=$comp_algorithms && sed -i "s/services=.*/services=$service/g" "$swaps"; }; } || {
     check_result=$(cat /sys/block/zram0/comp_algorithm)
     zram=$(echo "$check_result" | sed 's/\[//g' | sed 's/]//g' | sed 's/ /\n/g')
     check_result1=$(echo "$zram" | grep lz4)

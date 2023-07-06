@@ -5,8 +5,8 @@ ksu_check=false && record=0 && power="chmod" && open="swapon"
 cpu="11110000" && cpus="00001111" && sys="/sys/block/zram0"
 proc="/proc/sys/vm" && dev="/dev/memcg" && fs="/sys/fs/cgroup"
 camera_file="/system/system_ext/etc/camerabooster.json"
-lowmemorykiller="/sys/module/lowmemorykiller/parameters"
-qcom_file="/vendor/etc/perf/perfconfigstore.xml"
+lowmemorykiller="/sys/module/lowmemorykiller/parameters" && vbin="/vendor/bin"
+qcom_file="/vendor/etc/perf/perfconfigstore.xml" && bin="/system/bin"
 [[ -f "/data/adb/ksud" ]] && ksu_check=true
 zram=$(grep 'MemTotal' </proc/meminfo | tr -cd "0-9")
 swap_conf="$HChen/swap/swap.ini"
