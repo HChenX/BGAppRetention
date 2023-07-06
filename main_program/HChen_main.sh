@@ -121,7 +121,7 @@ stop_services() {
   { [[ $services == "true" ]] && {
     stopd() { { stop "$1"; } && { echo "- [i]:已停止服务:$1"; }; }
     echo "- [i]:正在处理无用系统服务"
-    for_mod "$(name_stop)" "stopd" "" "" "" "" ""
+    for_mod "$(name_stop)" "stopd" "" "" "" "" "" &>/dev/null
   }; } || { echo "- [!]:未开启处理无用系统服务功能"; }
 }
 thread_binding() {
