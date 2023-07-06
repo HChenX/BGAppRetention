@@ -20,7 +20,7 @@ volume_keys() {
   timeout=0
   while :; do
     sleep 0.5 && let timeout++
-    [[ $timeout -gt 30 ]] && { send_notifications "$1" "保后台模块" && break; }
+    [[ $timeout -gt 20 ]] && { send_notifications "$1" "保后台模块" && break; }
     volume="$(getevent -qlc 1 | awk '{ print $3 }')"
     case "$volume" in KEY_VOLUMEUP) send_notifications "$2" "保后台模块" && sleep 10 && reboot ;; KEY_VOLUMEDOWN) send_notifications "$3" "保后台模块" ;; *) continue ;; esac
     break

@@ -29,7 +29,6 @@
 - Remove the hard replacement file and change to dynamically modify the file content.
 - Fixed the problem of accidental removal of Kuiba and Athena.
 - Modify the write method of the prop and add or remove some prop modifications.
-- Add the function of stopping system services (by the Pandora kernel).
 - Modify the `Readme.md` file to make it more formatted and aesthetically pleasing.
 - Add intelligent notification and reminder function to provide a more intuitive understanding of module operation.
 
@@ -67,7 +66,6 @@
 > - @开心小阳光
 > - @海浪逃向岛屿
 > - @嘟嘟ski
-> - @潘多拉内核团队
 
 ## 3. Conclusion:
 
@@ -94,7 +92,7 @@
 
 > Please judge whether to install it yourself!
 
-## Update time: July 06, 2023, 18:00
+## Update time: July 06, 2023, 21:00
 
 # 中文
 
@@ -125,7 +123,6 @@
 - 去除硬替换文件，改为动态修改文件内容。
 - 修复偶发性去除快霸和雅典娜失效的问题。
 - 修改prop写入方法，增减部分prop修改。
-- 加入停止系统服务的功能(by `潘多拉内核`)。
 - 修改`Readme.md`文件，更符合格式更美观。
 - 加入智能通知提醒功能，更直观了解模块运行情况。
 
@@ -163,7 +160,6 @@
 > - @开心小阳光
 > - @海浪逃向岛屿
 > - @嘟嘟ski
-> - @潘多拉内核团队
 
 ## 3.末尾:
 
@@ -188,4 +184,4 @@
 
 > 请自行判断是否安装刷入！
 
-## 更新时间:2023.07.06 18:00
+## 更新时间:2023.07.06 21:00

@@ -117,13 +117,6 @@ other_mod() {
   [[ $close_kuaiba == "on" ]] && { echo "- [i]:已成功处理MTK快霸"; }
   { [[ $close_athena == "on" ]] && { echo "- [i]:已成功处理OPPO系雅典娜"; }; } || { [[ $close_athena == "off" ]] && echo "- [!]:未处理OPPO系雅典娜"; }
 }
-stop_services() {
-  { [[ $services == "true" ]] && {
-    stopd() { { stop "$1"; } && { echo "- [i]:已停止服务:$1"; }; }
-    echo "- [i]:正在处理无用系统服务"
-    { for_mod "$(name_stop)" "stopd" "" "" "" "" "" || true; }
-  }; } || { echo "- [!]:未开启处理无用系统服务功能"; }
-}
 thread_binding() {
   other_bin kswapd "$(mask 11110000)" -10
   echo "- [i]:设置kswapd线程成功"
@@ -177,7 +170,6 @@ last_mod() {
   other_setting
   on_prop_pool
   other_mod
-  stop_services
   thread_binding
   hot_patch
   sleep 10 && {
