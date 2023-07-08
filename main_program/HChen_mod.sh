@@ -9,7 +9,7 @@ lowmemorykiller="/sys/module/lowmemorykiller/parameters" && vbin="/vendor/bin"
 qcom_file="/vendor/etc/perf/perfconfigstore.xml" && bin="/system/bin"
 [[ -f "/data/adb/ksud" ]] && ksu_check=true
 zram=$(grep 'MemTotal' </proc/meminfo | tr -cd "0-9")
-swap_conf="$HChen/swap/swap.ini"
+swap_conf="$HChen/swap/swap.ini" && num=${#zram}
 cat_mod() { cat "$1"; }
 chmod_mod() { eval $power "$1" "$2"; }
 set_value_log() { { echo "- [i]:设置$2" && { now=$(cat_mod "$2") || true; } && { [[ $1 == "$now" ]] && echo "- [i]:目标设置为:$1,实际设置为:$now"; }; } || { echo "- [!]:目标设置为:$1,实际设置为:$now"; }; }
@@ -20,7 +20,7 @@ volume_keys() {
   timeout=0
   while :; do
     sleep 0.5 && let timeout++
-    [[ $timeout -gt 20 ]] && { send_notifications "$1" "保后台模块" && break; }
+    [[ $timeout -gt 30 ]] && { send_notifications "$1" "保后台模块" && break; }
     volume="$(getevent -qlc 1 | awk '{ print $3 }')"
     case "$volume" in KEY_VOLUMEUP) send_notifications "$2" "保后台模块" && sleep 10 && reboot ;; KEY_VOLUMEDOWN) send_notifications "$3" "保后台模块" ;; *) continue ;; esac
     break

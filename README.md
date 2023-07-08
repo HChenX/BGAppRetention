@@ -92,7 +92,7 @@
 
 > Please judge whether to install it yourself!
 
-## Update time: July 06, 2023, 21:00
+## Update time: July 08, 2023, 22:00
 
 # 中文
 
@@ -184,4 +184,4 @@
 
 > 请自行判断是否安装刷入！
 
-## 更新时间:2023.07.06 21:00
+## 更新时间:2023.07.08 22:00

@@ -19,16 +19,16 @@ Delete_cheat() {
   Output "--------------------------------------------"
   Output "--------------------------------------------"
   Output "- [i]:正在删除冲突文件！"
-  rm_rf() { { [[ -d $1 ]] && rm -rf "$1" && Output "- [i]:已删除:$1"; } || { [[ -f $1 ]] && rm -rf "$1" && Output "- [i]:已删除:$1"; }; }
+  rm_rf() { { [[ -d $1 ]] && touch "$1"/remove && touch "$1"/disable && Output "- [i]:已卸载:$1"; }; }
   [[ $rmv == 1 ]] && { touch $iconf/disable && touch $iconf/remove; }
-  rm_rf /data/swap_config.conf
-  rm_rf /data/adb/modules/scene_swap_controller/
-  rm_rf /data/adb/ksu/modules/scene_swap_controller/
-  rm_rf /data/swapfile*
-  rm_rf /data/swap_recreate
-  rm_rf /data/adb/ksu/modules/swap_controller/
-  rm_rf /data/adb/modules/swap_controller/
-  rm_rf /data/adb/swap_controller/
+  ksu="/data/adb/ksu/modules"
+  magisk="/data/adb/modules"
+  check="
+  $ksu/scene_swap_controller
+  $ksu/swap_controller
+  $magisk/scene_swap_controller
+  $magisk/swap_controller"
+  for i in $check; do rm_rf "$i"; done
   Output "- [i]:处理冲突文件完成！"
 }
 Dont_kill() {

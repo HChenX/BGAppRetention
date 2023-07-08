@@ -1,6 +1,6 @@
 #Author by @焕晨HChen
 magiskpolicy --live "allow system_server * * *"
-HChen=$(echo "${0%/*}" | xargs echo "$(sed 's/\/main_program//g')") && file="/main_program"
+{ HChen=$(echo "${0%/*}" | xargs echo "$(sed 's/\/main_program//g')") || { echo "- [!]:获取路径失败" && exit 55; }; } && file="/main_program"
 mod="$HChen$file/HChen_mod.sh" && value="$HChen$file/HChen_value.sh" && name="$HChen$file/HChen_name.sh" && chmod -R 0777 "$HChen"$file/
 { { [[ -f $mod ]] && [[ -f $value ]] && [[ -f $name ]]; } && { . $mod && . $value && . $name; }; } || { echo "- [!]:缺少关键文件" && exit 99; }
 { [[ -f $swap_conf ]] && { . "$swap_conf" && echo "- [i]:配置文件读取成功"; } || { echo "- [!]:配置文件读取异常" && exit 1; }; } || { echo "- [!]: 缺少$swap_conf" && exit 2; }
@@ -139,11 +139,8 @@ scene_delete() {
   $ksu/scene_swap_controller
   $ksu/swap_controller
   $magisk/scene_swap_controller
-  $magisk/swap_controller
-  /data/adb/swap_controller/
-  /data/swap_recreate
-  /data/swapfile*"
-  for t in $check; do [[ -d $t ]] && rm -rf "$t" && echo "- [!]:发现冲突已经删除目录:$t" && delete=yes; done
+  $magisk/swap_controller"
+  for s in $check; do [[ -d $s ]] && touch "$s"/disable && touch "$s"/remove && delete=yes; done
 }
 last_mod() {
   { [[ $record != "0" ]] && {
