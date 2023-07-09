@@ -12,7 +12,7 @@ zram=$(grep 'MemTotal' </proc/meminfo | tr -cd "0-9")
 swap_conf="$HChen/swap/swap.ini" && num=${#zram}
 cat_mod() { cat "$1"; }
 chmod_mod() { eval $power "$1" "$2"; }
-set_value_log() { { echo "- [i]:设置$2" && { now=$(cat_mod "$2") || true; } && { [[ $1 == "$now" ]] && echo "- [i]:目标设置为:$1,实际设置为:$now"; }; } || { echo "- [!]:目标设置为:$1,实际设置为:$now"; }; }
+set_value_log() { { echo "- [i]:设置$2" && { now=$(cat_mod "$2" | head -n 1) || true; } && { [[ $1 == "$now" ]] && echo "- [i]:目标设置为:$1,实际设置为:$now"; }; } || { echo "- [!]:目标设置为:$1,实际设置为:$now"; }; }
 set_value() { { [[ -f $2 ]] && { { chmod_mod 666 "$2" &>/dev/null || true; } && { { echo "$1" >"$2" && { chmod_mod 664 "$2" &>/dev/null || true; } && set_value_log "$1" "$2"; } || { echo "- [!]:无法写入$2文件"; }; }; }; } || { echo "- [!]:不存在$2文件"; }; }
 update_overlay() { { sed -i "s/\(Name=\"$1\"[[:blank:]]*Value=\"\)[^\"]*\(\"\)/\1$2\2/g" "$qcom_now_file" && { grep -q "Name=\"$1\"[[:blank:]]*Value=\"$2\"" "$qcom_now_file"; }; } && { echo "$1=$2" >>"$HChen"/Qualcomm; }; }
 send_notifications() { { { [[ $(pm list package | grep -w 'com.google.android.ext.services') != "" ]] && cmd notification allow_assistant "com.google.android.ext.services/android.ext.services.notification.Assistant"; } || true; } && { su -lp 2000 -c "cmd notification post -S messaging --conversation '$2' --message '$2':'$1' Tag '$RANDOM'" &>/dev/null; }; }

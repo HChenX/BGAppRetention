@@ -19,10 +19,11 @@
 
 ### Update Log:
 
-#### Latest Version:Background_retention_module v.41
+#### Latest Version:Background_retention_module v.42
 
 - Format log output.
 - Join GitHub Cloud Update.
+- Add memcg (cgroup) modification.
 - Fix some bugs and support KSU again.
 - Improve module functionality and increase code comprehension difficulty.
 - Make special modifications to Qualcomm based on its memory files.
@@ -92,7 +93,7 @@
 
 > Please judge whether to install it yourself!
 
-## Update time: July 08, 2023, 22:00
+## Update time: July 09, 2023, 18:30
 
 # 中文
 
@@ -113,10 +114,11 @@
 
 ### 更新日志:
 
-#### 最新版本为:保后台模块 v.41
+#### 最新版本为:保后台模块 v.42
 
 - 格式化日志输出。
 - 加入Github云更新。
+- 添加memcg(cgroup)修改。
 - 修复部分Bug，重新支持KSU。
 - 完善模块功能，提升代码理解难度。
 - 根据高通内存文件，对高通进行特殊修改。
@@ -184,4 +186,4 @@
 
 > 请自行判断是否安装刷入！
 
-## 更新时间:2023.07.08 22:00
+## 更新时间:2023.07.09 18:30

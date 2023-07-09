@@ -42,6 +42,13 @@ other_setting() {
   }
   other_vm
   echo "- [i]:设置io调度参数完成"
+  [[ -d $dev ]] && { mem=$(find "$dev" -maxdepth 1 -type d | sed "1d") && [[ $mem != "" ]] && {
+    for i in $mem; do
+      for m in $(mem_value1); do set_value "-1" "$i""$m"; done
+      for v in $(mem_value2); do set_value "1" "$i""$v"; done
+    done
+    echo "- [i]:设置memcg参数完成"
+  }; }
   [[ -f /sys/kernel/mm/lru_gen/enabled ]] && { set_value y /sys/kernel/mm/lru_gen/enabled && echo "- [i]:设置开启multi-gen LRU"; }
   { [[ $ksu_check != "true" ]] && { camera_folder="$HChen/system/system_ext/etc/" && camera_now_file="$HChen/system/system_ext/etc/camerabooster.json"; }; } || { camera_folder="$HChen/system_ext/etc/" && camera_now_file="$HChen/system_ext/etc/camerabooster.json"; }
   [[ -f $camera_file ]] && { { [[ ! -f $camera_now_file ]] && {
@@ -84,11 +91,6 @@ on_prop_pool() {
         echo "${name[i]}=${value[i]}" >>"$HChen"/system.prop
       }
     done
-    [[ $sdk != "33" ]] && { [[ $(getprop ro.lmk.use_psi) != "" ]] && {
-      resetprop ro.lmk.use_psi true
-      echo "ro.lmk.use_psi $(getprop ro.lmk.use_psi)"
-      echo "ro.lmk.use_psi=true" >>"$HChen"/system.prop
-    }; }
     echo -n "1" >"$HChen"/Prop_on
   }; } || {
     pck=$(cat "$HChen"/system.prop)
