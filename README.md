@@ -1,189 +1,89 @@
-# Background_retention
+<div align="center">
+<h1>保后台模块</h1>
 
-## `The backend retention module can enhance the software backend retention capability of mobile phones。This is a magisk module。`
+![stars](https://img.shields.io/github/stars/HChenX/BGAppRetention?style=flat)
+![downloads](https://img.shields.io/github/downloads/HChenX/BGAppRetention/total)
+![Github repo size](https://img.shields.io/github/repo-size/HChenX/BGAppRetention)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/HChenX/BGAppRetention)](https://github.com/HChenX/BGAppRetention/releases)
+[![GitHub Release Date](https://img.shields.io/github/release-date/HChenX/BGAppRetention)](https://github.com/HChenX/BGAppRetention/releases)
+![last commit](https://img.shields.io/github/last-commit/HChenX/BGAppRetention?style=flat)
+![language](https://img.shields.io/badge/language-shell-purple)
 
-# English
+<p><b><a href="README.md">简体中文</a> | <a href="README-en.md">English</a> </b></p>
+<p>本模块通过修改ZRAM和Prop等系统内存管理参数来达到保后台的功能，这是一个Magisk模块。</p>
+</div>
 
-## 1. Preface:
+# ✨保后台模块简介:
 
-### Module Source:
-
-- The module is based on the modified version of the Scene module by `@嘟嘟ski`.
-- The module is currently being modified and maintained by `@焕晨`.
-
-### About the Modified Author:
-
-- `@焕晨` is just a code novice, learning while modifying; so please forgive any flaws in the module.
-
-## 2. Content:
-
-### Update Log:
-
-#### Latest Version:Background_retention_module v.42
-
-- Format log output.
-- Join GitHub Cloud Update.
-- Add memcg (cgroup) modification.
-- Fix some bugs and support KSU again.
-- Improve module functionality and increase code comprehension difficulty.
-- Make special modifications to Qualcomm based on its memory files.
-- Remove the hard replacement file and change to dynamically modify the file content.
-- Fixed the problem of accidental removal of Kuiba and Athena.
-- Modify the write method of the prop and add or remove some prop modifications.
-- Modify the `Readme.md` file to make it more formatted and aesthetically pleasing.
-- Add intelligent notification and reminder function to provide a more intuitive understanding of module operation.
-
-### Change Log:
-
-- Removed functions such as write back.
-- Improve module functionality and optimize code.
-- Add and improve module support for KSU.
-- Add more judgments and format the module's log output.
-- Add targeted modifications to Qualcomm to enhance backend protection capabilities.
-- All Hard link in the module are converted to soft links to improve module compatibility.
-- Add intelligent notification and reminder function to provide a more intuitive understanding of module operation.
-- Modify the module parameter setting method to achieve comprehensive automation of setting and modification.
-- Redefine the size of ZRAM and dynamically set it for different memory devices.
-- Add the ability to lift Android system process restrictions and virtual process restrictions.
-- Add targeted prop modifications to MIUI to prevent background killing as much as possible.
-- Add more optimization modifications to lmk parameters, io scheduling, and prop parameters.
-- Add the function of removing Athena and MediaTek Kuiba, and add the additional LSP module.
-- `Additional Module: Don.t.kill Author: @海浪逃向岛屿 has been authorized.`
-
-### Module Authors:
-
-> - Original module author: `@嘟嘟ski`
-> - Modified module author: `@焕晨`
-> - Additional module author: `@海浪逃向岛屿`
-> - Honorary module author: `@开心小阳光`
-
-### Acknowledgments:
-
-#### List of contributors who helped with the module, in no particular order
-
-> - @全体酷友和群友
-> - @Newbing
-> - @Chatgpt
-> - @开心小阳光
-> - @海浪逃向岛屿
-> - @嘟嘟ski
-
-## 3. Conclusion:
-
-### Acknowledgment Statement:
-
-- Thank you for your support. Without your support, the module would not have come this far. Thank you very much!
-- The code of this module may have borrowed from some other modules, so if there is any infringement, please contact me
-  to remove it.
-- Since this module modifies a large number of system parameters, its stability and reliability may be poor. Please
-  judge whether to install it yourself.
-
-### Friendly link:
-
-- Don.t.kill module Github link:
-- [Don-t-Kill](https://github.com/UISSD/Don-t-Kill)
-
-### Communication group:
-
-- QQ group: 517788148
-
-### Disclaimer:
-
-> The installation of this module means that you are willing to bear all consequences yourself.
-
-> Please judge whether to install it yourself!
-
-## Update time: July 09, 2023, 18:30
-
-# 中文
-
-# 保后台模块简介
-
-## 1.先导:
-
-### 模块来源:
+### 💡模块来源:
 
 - 模块基于`@嘟嘟ski`的scene附加模块二改版而来。
-- 本模块现在由`@焕晨`进行二改创造和日常维护更新。
+- 本模块现在由`@焕晨HChen`进行二改编写和日常维护更新。
 
-### 关于模块二改作者:
+### 🌟模块原理:
 
-- `@焕晨`只是一个代码小白，边改边学；所以有缺陷之处还请多多包涵。
+- 本模块通过修改ZRAM和Prop等系统内存管理参数来达到保后台的功能。
+- 但是因此也具有局限性，难以完全触及和更改系统的kill逻辑，所以效果因人而异。
 
-## 2.内容:
+### 💫模块包含内容:
 
-### 更新日志:
+- 主Magisk模块内容。
+- 附加Lsp模块`AppRetentionHook`。
+- #### 注：附加模块作者：`焕晨HChen`，模块详细内容请查看：[AppRetentionHook](https://github.com/HChenX/AppRetentionHook)。
 
-#### 最新版本为:保后台模块 v.42
+### 🔥模块效果与风险：
 
-- 格式化日志输出。
-- 加入Github云更新。
-- 添加memcg(cgroup)修改。
-- 修复部分Bug，重新支持KSU。
-- 完善模块功能，提升代码理解难度。
-- 根据高通内存文件，对高通进行特殊修改。
-- 去除硬替换文件，改为动态修改文件内容。
-- 修复偶发性去除快霸和雅典娜失效的问题。
-- 修改prop写入方法，增减部分prop修改。
-- 修改`Readme.md`文件，更符合格式更美观。
-- 加入智能通知提醒功能，更直观了解模块运行情况。
+- 正如我上面所说的，纯Magisk模块效果因人而异。
+- 但是经过较长时间的测试，也拥有较多的测试人数，反馈效果还是可喜可贺的，较为满足预期。
+- 但是如果安装激活了里面的附加Lsp模块，保后台能力将会得到很大提升(请满足附加模块使用要求)。
 
-### 改动日志:
+* 模块采用理念激进的方式进行一些修改和设置，包括但不限于：
+    * 1.Zram大小设置为物理内存大小1.5倍，且模块暂不支持自由修改。
+    * 2.模块对Prop的设置较为激进，几乎禁止或修改了大部分内存管理逻辑。
+    * 3.模块对其他方面也有一些更改，比如:vm参数，lmk参数等。
 
-- 删除了回写等大量功能。
-- 完善模块功能，优化代码。
-- 添加并完善模块对KSU的支持。
-- 添加更多判断，格式化模块日志输出。
-- 加入对高通的针对性修改，提升保后台能力。
-- 模块内所有硬链接转为软链接，提高模块兼容性。
-- 加入智能通知提醒功能，更直观了解模块运行情况。
-- 修改模块参数设置方式，实现全面自动化设置修改。
-- 重新定义ZRAM大小，针对不同内存设备动态设置。
-- 加入解除安卓系统进程限制和虚进程限制的功能。
-- 针对MIUI加入针对性prop修改，尽可能阻止杀后台情况。
-- 加入更多对lmk参数，io调度和prop参数的优化修改。
-- 加入去除雅典娜和联发科快霸的功能，加入附加lsp模块。
-- `附加模块:Don.t.kill 作者:海浪逃向岛屿 已经获得授权。`
+* 虽然这些更改会提升保后台能力，但是也请注意可能导致一些未知的Bug，包括但不限于：
+    * 1.可能存在的内存管理失效的问题，从而引发的爆内存卡死的问题。
+    * 2.可能导致耗电量的增加，但是这是不可避免的，鱼与熊掌不可兼得，在合理范围内是可以接受的。
+    * 3.最严重可能导致卡开机的问题，所以使用前请确保你有足够的能力挽救。
 
-### 模块作者:
+# 👑模块作者信息：
 
-> - 模块原作者: `@嘟嘟ski`
-> - 二改模块作者: `@焕晨`
-> - 附加模块作者: `@海浪逃向岛屿`
-> - 名誉模块作者: `@开心小阳光`
+### ⭐模块作者:
 
-### 感谢名单:
+|  模块作者  |  模块作者名  |
+|:------:|:-------:|
+| 模块原作者  |  嘟嘟ski  |
+| 二改模块作者 | 焕晨HChen |
+| 附加模块作者 | 焕晨HChen |
 
-#### 对模块提供帮助的名单，排名不分前后
+### 🌹感谢名单:
 
-> - @全体酷友和群友
-> - @Newbing
-> - @Chatgpt
-> - @开心小阳光
-> - @海浪逃向岛屿
-> - @嘟嘟ski
+##### 对模块提供帮助的名单，排名不分前后
 
-## 3.末尾:
+- 全体酷友和群友
+- Newbing
+- Chatgpt
+- 嘟嘟ski
 
-### 致谢声明:
+## 🎉结语:
+
+### 💕致谢声明:
 
 - 感谢各位的支持，没有你们的支持模块不可能走到现在，非常感谢！
 - 本模块代码可能借鉴了部分其他模块的代码，所有若有侵权请联系我删除。
-- 本模块由于修改了系统大量参数，稳定性和可靠性可能欠佳，请自行判断是否刷入。
 
-### 友情链接:
+### 🎵友情链接:
 
-- Don.t.kill模块Github链接:
-- [Don-t-Kill](https://github.com/UISSD/Don-t-Kill)
+- AppRetentionHook模块Github链接:
+- [AppRetentionHook](https://github.com/HChenX/AppRetentionHook)
 
-### 交流群:
+### 📢焕晨的交流群:
 
 - QQ群:517788148
 
-### 免责声明:
+### 💣免责声明:
 
 > 模块刷入即代表愿意自行承担一切后果。
 
 > 请自行判断是否安装刷入！
-
-## 更新时间:2023.07.09 18:30

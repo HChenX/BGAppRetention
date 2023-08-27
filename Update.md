@@ -1,12 +1,19 @@
 ## 更新日志:
 
-### 最新版本为:保后台模块 v.42
+## Update:
 
-- 完善ZRAM大小获取功能。
-- 完善模块代码，优化逻辑。
-- 添加memcg(cgroup)修改。
-- 修复一个可能存在的卡顿问题。
-- 优化prop修改，使修改更合理。
+### 版本号：保后台N1 2023-08-27
+
+### Version: BGAppRetention v.N1 2023-08-27
+
+- 重构模块代码。
+- 修复代码错误。
+- 完善模块功能。
+- Fix code errors.
+- Refactoring module code.
+- Improve module functionality.
 - #Author by @焕晨HChen
 
-## 更新时间:2023.07.09 18:30
+## 更新时间:2023-08-27 18:00
+
+## Update Date: 2023-08-27 18:00

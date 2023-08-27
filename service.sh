@@ -44,7 +44,7 @@ echo "手机品牌:$(getprop ro.product.brand)" >"$Log"
   echo "- [i]:解除进程限制成功:for A8/9" >>"$Log"
 }; }
 {
-  chmod 777 "$HChen"/main_program/HChen_main.sh
-  sh "$HChen"/main_program/HChen_main.sh 2>/dev/null
+  chmod 777 "$HChen"/main_program/HChenMain.sh
+  sh "$HChen"/main_program/HChenMain.sh 2>/dev/null
   echo "---------------------------------------------------------------------------"
 } >>"$Log"
