@@ -122,7 +122,7 @@ setVm() {
     swappiness=160
   }
   echo "- [i]:设置swappiness"
-  setValue "$swappiness" $swappinessd
+  setValue "$swappiness" $swapN
   setValue "$swappiness" /dev/memcg/memory.swappiness
   setValue "$swappiness" /dev/memcg/apps/memory.swappiness
   setValue "$swappiness" /sys/fs/cgroup/memory/apps/memory.swappiness
