@@ -210,9 +210,9 @@ Other_mode() {
     Output "- [i]:成功清理Prop残留。"
     Output "- [!]:注意可能导致持久Prop设置失效，比如：关闭开机音效需要重新设置。"
   }; } || {
-    [[ -f $iconf/Prop_on ]] && {
-      [[ $(cat "$iconf"/Prop_on) != 0 ]] && {
-        cp -f "$iconf"/system.prop "$MODPATH" && echo -n "0" >"$MODPATH"/Prop_on && Output "- [i]:成功获取历史文件。"
+    [[ -f $iconf/prop ]] && {
+      [[ $(cat "$iconf"/prop) != 0 ]] && {
+        cp -f "$iconf"/system.prop "$MODPATH" && echo -n "0" >"$MODPATH"/prop && Output "- [i]:成功获取历史文件。"
       }
     }
   }
@@ -227,8 +227,6 @@ Other_settings() { set_perm_recursive "$MODPATH" 0 0 0777 0777; }
   Other_mode
   Other_settings
 }
-Output "- [i]:即将完成，更新内容请看群公告！"
-Output "- [i]:特别感谢帮我debug的群友！ "
-Output "- [i]:交流群：517788148"
+Output "- [i]:群：517788148"
 Output "- [i]:作者：@焕晨HChen"
-Output "- [i]:安装完成！"
+Output "- [i]:安装完成！All Down!"
