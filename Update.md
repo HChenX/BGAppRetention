@@ -2,9 +2,9 @@
 
 ## Update:
 
-### 版本号：保后台N1 2023-08-27
+### 版本号：保后台N1 2023-08-28
 
-### Version: BGAppRetention v.N1 2023-08-27
+### Version: BGAppRetention v.N1 2023-08-28
 
 - 重构模块代码。
 - 修复代码错误。
@@ -30,6 +30,6 @@
 - Turn off the USB debugging option, etc.
 - If you encounter the above problems, please reset the switch.
 
-## 更新时间:2023-08-27 18:00
+## 更新时间:2023-08-28 13:00
 
-## Update Date: 2023-08-27 18:00
+## Update Date: 2023-08-28 13:00
