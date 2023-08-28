@@ -9,8 +9,10 @@
 - 重构模块代码。
 - 修复代码错误。
 - 完善模块功能。
+- 添加附加Lsp模块.
 - Fix code errors.
 - Refactoring module code.
+- Add additional Lsp modules.
 - Improve module functionality.
 - #Author by @焕晨HChen
 

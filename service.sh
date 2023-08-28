@@ -11,10 +11,10 @@ Wait_until_login() {
 Wait_until_login
 magiskpolicy --live "allow system_server * * *"
 { [[ -f /system/bin/sh ]] && alias sh="/system/bin/sh"; } || { [[ -f /vendor/bin/sh ]] && alias sh="/vendor/bin/sh"; }
-{ [[ -f "$HChen/Ksu_ver" ]] && Ver=$(cat "$HChen/Ksu_ver") && mod=Ksu; } || { Ver=$(sed -n "s/^.*MAGISK_VER='\([^']*\)'.*$/\1/p" /data/adb/magisk/util_functions.sh) && mod=Magisk; }
+{ [[ -f "$HChen/ksuVer" ]] && Ver=$(cat "$HChen/ksuVer") && mod=Ksu; } || { Ver=$(sed -n "s/^.*MAGISK_VER='\([^']*\)'.*$/\1/p" /data/adb/magisk/util_functions.sh) && mod=Magisk; }
 { [[ -f /sys/devices/soc0/soc_id ]] && cpu="$(cat /sys/devices/soc0/soc_id)"; } || { cpu="$(cat /sys/devices/system/soc/soc0/id)"; }
 time=$(date "+%Y年%m月%d日_%H时%M分%S秒")
-open=$(cat "$HChen"/Prop_on)
+open=$(cat "$HChen"/prop)
 let open++
 echo "手机品牌:$(getprop ro.product.brand)" >"$Log"
 {
@@ -44,7 +44,7 @@ echo "手机品牌:$(getprop ro.product.brand)" >"$Log"
   echo "- [i]:解除进程限制成功:for A8/9" >>"$Log"
 }; }
 {
-  chmod 777 "$HChen"/main_program/HChenMain.sh
-  sh "$HChen"/main_program/HChenMain.sh 2>/dev/null
+  chmod 777 "$HChen"/main_program/ZramMain.sh
+  sh "$HChen"/main_program/ZramMain.sh 2>/dev/null
   echo "---------------------------------------------------------------------------"
 } >>"$Log"

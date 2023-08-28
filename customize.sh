@@ -2,7 +2,7 @@
 swaps="$MODPATH/swap/swap.ini"
 sdk=$(getprop ro.system.build.version.sdk)
 old="zram_huanchen" && new="HChen_Zram"
-[[ $KSU == "true" ]] && touch "$MODPATH"/Ksu_ver && echo -n "$KSU_VER" >"$MODPATH"/Ksu_ver
+[[ $KSU == "true" ]] && touch "$MODPATH"/ksuVer && echo -n "$KSU_VER" >"$MODPATH"/ksuVer
 {
   [[ $(find /data/adb/modules/ -maxdepth 1 -name $old) != "" ]] && {
     confs="/data/adb/modules/$old" && confs2="/data/adb/ksu/modules/$old" && rmv=1
@@ -31,8 +31,8 @@ comp_algorithms=$(Get_props comp_algorithm)
 close_kuaiba=$(Get_props close_kuaiba)
 reserve=$(Get_props reserve)
 Delete_cheat() {
-  Output "- [i]:欢迎使用本模块(///ω///)"
-  Output "- [i]:正在安装改版模块！< (ˉ^ˉ)> "
+  Output "- [i]:欢迎使用本模块 (///ω///)"
+  Output "- [i]:正在安装本模块！< (ˉ^ˉ)> "
   Output "--------------------------------------------"
   Output "--------------------------------------------"
   Output "- [i]:正在删除冲突文件！"
@@ -50,7 +50,7 @@ Delete_cheat() {
 }
 Dont_kill() {
   { [[ "$sdk" -ge 31 ]] && {
-    Output "- [i]:(安卓12/13专属)AppRetention模块已安装。"
+    Output "- [i]:(Android12/13)AppRetention模块已安装。"
     Output "- [i]:模块作用：通过Hook系统kill逻辑实现后台保活。"
     Output "- [i]:使用方法：lsp里面激活,勾选作用域Android重启即可。"
     Output "- [i]:模块作者：焕晨HChen"
@@ -73,13 +73,14 @@ Close_kuaiba() {
   { [[ $close_kuaiba == "on" ]] && {
     kuaibaapp="/system/system_ext/priv-app/DuraSpeed/DuraSpeed.apk"
     kuaibaapp2="${kuaibaapp//DuraSpeed.apk/}"
-    [[ ! -f $kuaibaapp ]] && Output "- [!]:不存在快霸文件！请联系开发者！"
-    mkdir -p "$MODPATH""$kuaibaapp2"
-    touch "$MODPATH""$kuaibaapp"
-    Output "- [i]:成功处理MTK快霸。"
-    echo "
+    { ! { [[ ! -f $kuaibaapp ]] && Output "- [!]:不存在快霸文件！请联系开发者！"; }; } && {
+      mkdir -p "$MODPATH""$kuaibaapp2"
+      touch "$MODPATH""$kuaibaapp"
+      Output "- [i]:成功处理MTK快霸。"
+      echo "
 #用于标记是否关闭快霸
 close_kuaiba=on" >>"$swaps"
+    }
   }; } || { {
     [[ $packages == "com.mediatek.duraspeed" ]] && {
       Output "- [i]:(联发科专属)下面决定是否关闭联发科的快霸。"
@@ -202,15 +203,18 @@ Other_mode() {
   } || {
     sed -i '12a '"comp_algorithm=$comp_algorithm"'' "$swaps" && Output "- [i]:设置zram压缩模式为：$comp_algorithm"
   }
-  [[ -f $iconf/Prop_on ]] && {
-    [[ $(cat "$iconf"/Prop_on) != 0 ]] && {
-      cp -f "$iconf"/system.prop "$MODPATH" && echo -n "0" >"$MODPATH"/Prop_on && Output "- [i]:成功获取历史文件。"
-    }
-  }
   [[ -f $iconf/module.prop ]] && version=$(grep "versionCode" <$iconf/module.prop | cut -f2 -d '=')
-  [[ $version -gt 2023070900 ]] && [[ -f /data/property/persistent_properties ]] && {
+  { [[ $version -le 2023070900 ]] && [[ -f /data/property/persistent_properties ]] && {
     cp -f /data/property/persistent_properties "$MODPATH"/
     echo -n "" >/data/property/persistent_properties
+    Output "- [i]:成功清理Prop残留。"
+    Output "- [!]:注意可能导致持久Prop设置失效，比如：关闭开机音效需要重新设置。"
+  }; } || {
+    [[ -f $iconf/Prop_on ]] && {
+      [[ $(cat "$iconf"/Prop_on) != 0 ]] && {
+        cp -f "$iconf"/system.prop "$MODPATH" && echo -n "0" >"$MODPATH"/Prop_on && Output "- [i]:成功获取历史文件。"
+      }
+    }
   }
 }
 
