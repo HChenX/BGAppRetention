@@ -1,0 +1,7 @@
+id=HChen_Zram
+name=保后台模块V.N1
+version=2023.08.27
+versionCode=2023082700
+author=焕晨HChen
+description=通过修改内存相关参数达到增强后台留存能力的目的。#Author by @焕晨HChen
+updateJson=https://raw.githubusercontent.com/HChenX/Background_retention/main/HChen.json

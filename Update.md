@@ -6,30 +6,21 @@
 
 ### Version: BGAppRetention v.N1 2023-08-28
 
-- 重构模块代码。
-- 修复代码错误。
-- 完善模块功能。
-- 添加附加Lsp模块.
-- Fix code errors.
-- Refactoring module code.
-- Add additional Lsp modules.
-- Improve module functionality.
+- 重构模块，回归初始。
+- 请注意：
+- 本模块现在已经和N1版本有巨大差别，如果介意请不要更新！
+- 差别包括：去除大部分功能仅保留zram大小修改和vm，lmk参数调整功能。
+- 此版本模块主要用于辅助本人另一个Lsp模块`AppRetention`。
+- 当然作为仅修改部分内存参数的模块你也可以单独安装。
+- Reconstruct the module and return to the initial state.
+- Please note:
+- This module is now significantly different from the N1 version. If you mind, please do not update it!
+- The difference includes: removing most functions and only retaining the ZRAM size modification and VM, as well as the
+  lmk parameter adjustment function.
+- This version of the module is mainly used to assist me with another Lsp module, 'AppRetention'.
+- Of course, as a module that only modifies some memory parameters, you can also install it separately.
 - #Author by @焕晨HChen
 
-### 注意事项：
+## 更新时间:2023-11-11 23:56
 
-### Precautions:
-
-- 因为清理历史遗留prop参数，所以会清空文件/data/property/persistent_properties
-- 这可能导致一些持久设置失效。比如：关闭的开机音效会重新打开，Usb调试选项关闭等。
-- 如果遇到上述问题请重新开关设置开关即可。
-- Because cleaning up legacy prop parameters from history，
-- So it will empty the files: /data/property/persistent_properties
-- This may cause some persistent settings to fail. Such as:
-- The turned off power-on-sound will be turned back on,
-- Turn off the USB debugging option, etc.
-- If you encounter the above problems, please reset the switch.
-
-## 更新时间:2023-08-28 13:00
-
-## Update Date: 2023-08-28 13:00
+## Update Date: 2023-11-11 23:56

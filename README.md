@@ -1,5 +1,5 @@
 <div align="center">
-<h1>保后台模块</h1>
+<h1>内存参数调整模块</h1>
 
 ![stars](https://img.shields.io/github/stars/HChenX/BGAppRetention?style=flat)
 ![downloads](https://img.shields.io/github/downloads/HChenX/BGAppRetention/total)
@@ -10,20 +10,19 @@
 ![language](https://img.shields.io/badge/language-shell-purple)
 
 <p><b><a href="README.md">简体中文</a> | <a href="README-en.md">English</a> </b></p>
-<p>本模块通过修改ZRAM和Prop等系统内存管理参数来达到保后台的功能，这是一个Magisk模块。</p>
+<p>本模块专用于辅助本人另一个项目的Lsp模块`AppRetention`</p>
 </div>
 
-# ✨保后台模块简介:
+# ✨内存参数模块简介:
 
 ### 💡模块来源:
 
-- 模块基于`@嘟嘟ski`的scene附加模块二改版而来。
-- 本模块现在由`@焕晨HChen`进行二改编写和日常维护更新。
+- 模块作者`@焕晨HChen`。
 
 ### 🌟模块原理:
 
-- 本模块通过修改ZRAM和Prop等系统内存管理参数来达到保后台的功能。
-- 但是因此也具有局限性，难以完全触及和更改系统的kill逻辑，所以效果因人而异。
+- 模块通过调整内存参数来辅助Lsp模块`AppRetention`。
+- 使用Shell命令等方式修改zarm大小vm参数，lmk参数。
 
 ### 💫模块包含内容:
 
@@ -31,21 +30,13 @@
 - 附加Lsp模块`AppRetentionHook`。
 - #### 注：附加模块作者：`焕晨HChen`，模块详细内容请查看：[AppRetentionHook](https://github.com/HChenX/AppRetentionHook)。
 
-### 🔥模块效果与风险：
+### 🔥模块效果：
 
-- 正如我上面所说的，纯Magisk模块效果因人而异。
-- 但是经过较长时间的测试，也拥有较多的测试人数，反馈效果还是可喜可贺的，较为满足预期。
-- 但是如果安装激活了里面的附加Lsp模块，保后台能力将会得到很大提升(请满足附加模块使用要求)。
+- 配合Lsp模块`AppRetention`，使其能够发挥更好的效果。
 
 * 模块采用理念激进的方式进行一些修改和设置，包括但不限于：
-    * 1.Zram大小设置为物理内存大小1.5倍，且模块暂不支持自由修改。
-    * 2.模块对Prop的设置较为激进，几乎禁止或修改了大部分内存管理逻辑。
+    * 1.zram大小设置为物理内存大小1.5倍左右，且模块暂不支持自由修改。
     * 3.模块对其他方面也有一些更改，比如:vm参数，lmk参数等。
-
-* 虽然这些更改会提升保后台能力，但是也请注意可能导致一些未知的Bug，包括但不限于：
-    * 1.可能存在的内存管理失效的问题，从而引发的爆内存卡死的问题。
-    * 2.可能导致耗电量的增加，但是这是不可避免的，鱼与熊掌不可兼得，在合理范围内是可以接受的。
-    * 3.最严重可能导致卡开机的问题，所以使用前请确保你有足够的能力挽救。
 
 # 👑模块作者信息：
 
@@ -53,18 +44,15 @@
 
 |  模块作者  |  模块作者名  |
 |:------:|:-------:|
-| 模块原作者  |  嘟嘟ski  |
-| 二改模块作者 | 焕晨HChen |
+|  模块作者  | 焕晨HChen |
 | 附加模块作者 | 焕晨HChen |
 
 ### 🌹感谢名单:
 
 ##### 对模块提供帮助的名单，排名不分前后
 
-- 全体酷友和群友
 - Newbing
 - Chatgpt
-- 嘟嘟ski
 
 ## 🎉结语:
 
@@ -81,6 +69,7 @@
 ### 📢焕晨的交流群:
 
 - QQ群:517788148
+- 电报:[Telegram](https://t.me/HChen_AppRetention)
 
 ### 💣免责声明:
 
