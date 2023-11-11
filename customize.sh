@@ -17,8 +17,7 @@ findOld() {
         }
     }
 }
-findfile=$(findOld $old findfile)
-findfile2=$(findOld $old2)
+
 Output() {
     echo "$@"
     sleep "$(echo "scale=3; $RANDOM/32768*0.2" | bc -l)"
@@ -50,6 +49,8 @@ Delete_cheat() {
     Output "--------------------------------------------"
     Output "- [i]:正在删除冲突文件！"
     rm_rf() { { [[ -d $1 ]] && touch "$1"/remove && touch "$1"/disable && Output "- [i]:已卸载:$1"; }; }
+    findfile=$(findOld $old)
+    findfile2=$(findOld $old2)
     [[ $findfile != "" ]] && { touch $findfile/disable && touch $findfile/remove; }
     [[ $findfile2 != "" ]] && { touch $findfile2/disable && touch $findfile2/remove; }
     ksu="/data/adb/ksu/modules"
@@ -63,13 +64,13 @@ Delete_cheat() {
     Output "- [i]:处理冲突文件完成！"
 }
 AppRetention() {
-    Output "- [i]:AppRetention模块"
+    Output "- [i]:AppRetention模块，版本4.0"
     Output "- [i]:模块作用：通过Hook系统kill逻辑实现后台保活"
     Output "- [i]:模块作者：焕晨HChen"
     Output "- [i]:音量上安装，音量下取消"
     { [[ $(Volume_key_monitoring) == 0 ]] && {
         version=$(dumpsys package Com.HChen.Hook | grep versionName | cut -f2 -d '=')
-        { [[ "$(echo "$version >= 3.9" | bc -l)" -eq 1 ]] && {
+        { [[ "$(echo "$version >= 4.0" | bc -l)" -eq 1 ]] && {
             Output "- [i]:AppRetention模块已经安装且最新"
             echo "
 #用于标记是否安装附加模块
