@@ -1,11 +1,9 @@
 #Author by @焕晨HChen
 swaps="$MODPATH/swap.ini"
-sdk=$(getprop ro.system.build.version.sdk)
-[[ $KSU == "true" ]] && touch "$MODPATH"/ksuVer && echo -n "$KSU_VER" >"$MODPATH"/ksuVer
 old="zram_huanchen" && old2="HChen_Zram"
 findOld() {
     {
-        { [[ $(find /data/adb/modules/ -maxdepth 1 -name $1) != "" ]] && {
+        { [[ $KSU != "true" ]] && {
             #            { [[ $KSU != "true" ]] && {
             #                echo "/data/adb/modules/$1"
             #            }; } || {
@@ -51,8 +49,8 @@ Delete_cheat() {
     rm_rf() { { [[ -d $1 ]] && touch "$1"/remove && touch "$1"/disable && Output "- [i]:已卸载:$1"; }; }
     findfile=$(findOld $old)
     findfile2=$(findOld $old2)
-    [[ $findfile != "" ]] && { touch $findfile/disable && touch $findfile/remove; }
-    [[ $findfile2 != "" ]] && { touch $findfile2/disable && touch $findfile2/remove; }
+    [[ $findfile != "" ]] && { touch $findfile/disable && touch $findfile/remove && Output "- [i]:已卸载:$findfile"; }
+    [[ $findfile2 != "" ]] && { touch $findfile2/disable && touch $findfile2/remove && Output "- [i]:已卸载:$findfile2"; }
     ksu="/data/adb/ksu/modules"
     magisk="/data/adb/modules"
     check="
@@ -67,34 +65,25 @@ AppRetention() {
     Output "- [i]:AppRetention模块，版本4.0"
     Output "- [i]:模块作用：通过Hook系统kill逻辑实现后台保活"
     Output "- [i]:模块作者：焕晨HChen"
-    Output "- [i]:音量上安装，音量下取消"
-    { [[ $(Volume_key_monitoring) == 0 ]] && {
-        version=$(dumpsys package Com.HChen.Hook | grep versionName | cut -f2 -d '=')
-        { [[ "$(echo "$version >= 4.0" | bc -l)" -eq 1 ]] && {
-            Output "- [i]:AppRetention模块已经安装且最新"
-            echo "
-#用于标记是否安装附加模块
-app_retention=yes" >>"$swaps"
-            rm -rf /data/local/tmp/AppRetention.apk
-            rm -rf "$MODPATH"/AppRetention.apk
-        }; } || {
+    version=$(dumpsys package Com.HChen.Hook | grep versionName | cut -f2 -d '=')
+    { [[ "$(echo "$version >= 4.0" | bc -l)" -eq 1 ]] && {
+        Output "- [i]:AppRetention模块已经安装且最新"
+        rm -rf /data/local/tmp/AppRetention.apk
+        rm -rf "$MODPATH"/AppRetention.apk
+    }; } || {
+        Output "- [i]:音量上安装，音量下取消"
+        { [[ $(Volume_key_monitoring) == 0 ]] && {
             unzip -o "$ZIPFILE" 'AppRetention.apk' -d /data/local/tmp/ &>/dev/null
             [[ ! -f /data/local/tmp/AppRetention.apk ]] && Output "- [!]:解压附加模块失败！无法进行安装！" && exit 1
             pm install -r /data/local/tmp/AppRetention.apk &>/dev/null
             rm -rf /data/local/tmp/AppRetention.apk
             rm -rf "$MODPATH"/AppRetention.apk
             Output "- [i]:AppRetention模块安装成功"
-            echo "
-#用于标记是否安装附加模块
-app_retention=yes" >>"$swaps"
+        }; } || {
+            Output "- [!]:AppRetention模块取消安装"
+            rm -rf /data/local/tmp/AppRetention.apk
+            rm -rf "$MODPATH"/AppRetention.apk
         }
-    }; } || {
-        Output "- [!]:AppRetention模块取消安装"
-        echo "
-#用于标记是否安装附加模块
-app_retention=no" >>"$swaps"
-        rm -rf /data/local/tmp/AppRetention.apk
-        rm -rf "$MODPATH"/AppRetention.apk
     }
 }
 Other_mode() {
@@ -116,7 +105,7 @@ Other_mode() {
     {
         [[ $comp_algorithm == "" ]] && Output "- [!]:获取zram压缩模式失败！" && exit 4
     } || {
-        sed -i '5a '"comp_algorithm=$comp_algorithm"'' "$swaps" && Output "- [i]:设置zram压缩模式为：$comp_algorithm"
+        sed -i '3a '"comp_algorithm=$comp_algorithm"'' "$swaps" && Output "- [i]:设置zram压缩模式为：$comp_algorithm"
     }
 }
 

@@ -1,8 +1,14 @@
 ro.lmk.low=1001
 ro.lmk.medium=1001
 ro.lmk.critical=1001
+ro.lmk.swap_util_max=100
 ro.lmk.thrashing_limit=100
 ro.lmk.thrashing_limit_decay=10
+ro.lmk.swap_free_low_percentage=1
 ro.lmk.psi_partial_stall_ms=140
 ro.lmk.psi_complete_stall_ms=700
-ro.lmk.swap_free_low_percentage=0
+ro.lmk.kill_heaviest_task=false
+ro.lmk.swap_is_low_kill_enable=0
+ro.lmk.limit_killing_array_kb=4,4,4,4
+persist.vendor.duraspeed.support=0
+persist.vendor.duraspeed.lowmemory.enable=0
