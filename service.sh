@@ -5,8 +5,6 @@ Wait_until_login() {
     while [ ! -d "/sdcard/Android" ]; do sleep 1; done
 }
 Wait_until_login
-# 更改selinux规则
-magiskpolicy --live "allow system_server * * *"
 { [[ -f /system/bin/sh ]] && {
     /system/bin/sh $HChen/memory.sh
 }; } || {

@@ -105,10 +105,10 @@ setVm() {
     #设置cache参数
     {
         echo "- [i]:设置cache参数"
-        setValue 5 /proc/sys/vm/dirty_background_ratio
+        setValue 2 /proc/sys/vm/dirty_background_ratio
         setValue 80 /proc/sys/vm/dirty_ratio
         setValue 2000 /proc/sys/vm/dirty_expire_centisecs
-        setValue 300 /proc/sys/vm/dirty_writeback_centisecs
+        setValue 250 /proc/sys/vm/dirty_writeback_centisecs
         setValue 150 /proc/sys/vm/vfs_cache_pressure
         #设置其它vm参数
         echo "- [i]:设置其它vm参数"
@@ -121,15 +121,15 @@ setVm() {
         # io调试开关
         setValue 0 /proc/sys/vm/block_dump
         # vm 状态更新频率
-        setValue 20 /proc/sys/vm/stat_interval
+        setValue 5 /proc/sys/vm/stat_interval
         # 是否允许过量使用运存
         #  setValue 200 /proc/sys/vm/overcommit_ratio
         setValue 1 /proc/sys/vm/overcommit_memory
         # 触发oom后怎么抛异常
         setValue 0 /proc/sys/vm/panic_on_oom
         # 此参数决定了内核在后台应该压缩内存的力度。参数取 [0, 100] 范围内的值
-        # 待测试
-        setValue 20 /proc/sys/vm/compaction_proactiveness
+        # 默认20，待测试
+        setValue 30 /proc/sys/vm/compaction_proactiveness
         #  压缩内存节省空间（会导致kswap0异常）
         #  setValue 1 /proc/sys/vm/compact_memory
         #  watermark_boost_factor用于优化内存外碎片化
@@ -163,6 +163,8 @@ echo "手机品牌:$(getprop ro.product.brand)" >"$HChen"/log.txt
         echo "AppRetention下载地址:https://github.com/HChenX/AppRetentionHook"
     }
     echo "---------------------------------------------------------------------------"
+    # 更改selinux规则
+    magiskpolicy --live "allow system_server * * *"
     device_config set_sync_disabled_for_tests persistent
     settings put global settings_enable_monitor_phantom_procs false
     device_config put activity_manager max_cached_processes 2147483647
