@@ -62,11 +62,11 @@ Delete_cheat() {
     Output "- [i]:处理冲突文件完成！"
 }
 AppRetention() {
-    Output "- [i]:AppRetention模块，版本4.0"
+    Output "- [i]:AppRetention模块，版本4.1"
     Output "- [i]:模块作用：通过Hook系统kill逻辑实现后台保活"
     Output "- [i]:模块作者：焕晨HChen"
     version=$(dumpsys package Com.HChen.Hook | grep versionName | cut -f2 -d '=')
-    { [[ "$(echo "$version >= 4.0" | bc -l)" -eq 1 ]] && {
+    { [[ "$(echo "$version >= 4.1" | bc -l)" -eq 1 ]] && {
         Output "- [i]:AppRetention模块已经安装且最新"
         rm -rf /data/local/tmp/AppRetention.apk
         rm -rf "$MODPATH"/AppRetention.apk

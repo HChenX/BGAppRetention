@@ -50,8 +50,8 @@
 
 ### 🌹Acknowledgments List:
 
-- Newbing
-- Chatgpt
+- NewBing
+- ChatGpt
 
 ## 🎉Conclusion:
 

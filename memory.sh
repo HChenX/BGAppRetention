@@ -129,7 +129,7 @@ setVm() {
         setValue 0 /proc/sys/vm/panic_on_oom
         # 此参数决定了内核在后台应该压缩内存的力度。参数取 [0, 100] 范围内的值
         # 默认20，待测试
-        setValue 30 /proc/sys/vm/compaction_proactiveness
+        setValue 35 /proc/sys/vm/compaction_proactiveness
         #  压缩内存节省空间（会导致kswap0异常）
         #  setValue 1 /proc/sys/vm/compact_memory
         #  watermark_boost_factor用于优化内存外碎片化
@@ -164,11 +164,11 @@ echo "手机品牌:$(getprop ro.product.brand)" >"$HChen"/log.txt
     }
     echo "---------------------------------------------------------------------------"
     # 更改selinux规则
-    magiskpolicy --live "allow system_server * * *"
-    device_config set_sync_disabled_for_tests persistent
-    settings put global settings_enable_monitor_phantom_procs false
-    device_config put activity_manager max_cached_processes 2147483647
-    device_config put activity_manager max_phantom_processes 2147483647
+    #    magiskpolicy --live "allow system_server * * *"
+    #    device_config set_sync_disabled_for_tests persistent
+    #    settings put global settings_enable_monitor_phantom_procs false
+    #    device_config put activity_manager max_cached_processes 2147483647
+    #    device_config put activity_manager max_phantom_processes 2147483647
     resetprop sys.lmk.minfree_levels 1:1001,2:1001,3:1001,4:1001,5:1001,6:1001
     setZram
     setVm

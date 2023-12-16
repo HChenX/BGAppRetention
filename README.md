@@ -51,8 +51,8 @@
 
 ##### 对模块提供帮助的名单，排名不分前后
 
-- Newbing
-- Chatgpt
+- NewBing
+- ChatGpt
 
 ## 🎉结语:
 
