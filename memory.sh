@@ -34,10 +34,10 @@ lengthMod() {
     { [[ $digit_count -gt $2 ]] && {
         { [[ $3 == "\*" ]] && {
             echo $(expr $(expr $(echo $1 | cut -c 1-2) + 1) \* $4)
-            #            echo $(($(($(echo $1 | cut -c 1-2) + 1)) * $4))
+            # echo $(($(($(echo $1 | cut -c 1-2) + 1)) * $4))
         }; } || {
             echo $(expr $(echo $1 | cut -c 1-2) $3 $4)
-            #            echo $(($(echo $1 | cut -c 1-2) $3 $4))
+            # echo $(($(echo $1 | cut -c 1-2) $3 $4))
         }
     }; } || {
         { [[ $3 == "\*" ]] && {
@@ -155,7 +155,7 @@ echo "手机品牌:$(getprop ro.product.brand)" >"$HChen"/log.txt
     test "$(getprop ro.miui.ui.version.name)" != "" &&
         echo "MIUI版本:MIUI $(getprop ro.miui.ui.version.name) - $(getprop ro.build.version.incremental) "
     echo "系统开机时间:$time"
-    version=$(dumpsys package Com.HChen.Hook | grep versionName | cut -f2 -d '=')
+    version=$(dumpsys package com.hchen.appretention | grep versionName | cut -f2 -d '=')
     { [[ $version != "" ]] && {
         echo "AppRetention已经安装:$version"
     }; } || {
@@ -164,11 +164,11 @@ echo "手机品牌:$(getprop ro.product.brand)" >"$HChen"/log.txt
     }
     echo "---------------------------------------------------------------------------"
     # 更改selinux规则
-    #    magiskpolicy --live "allow system_server * * *"
-    #    device_config set_sync_disabled_for_tests persistent
-    #    settings put global settings_enable_monitor_phantom_procs false
-    #    device_config put activity_manager max_cached_processes 2147483647
-    #    device_config put activity_manager max_phantom_processes 2147483647
+    magiskpolicy --live "allow system_server * * *"
+    device_config set_sync_disabled_for_tests persistent
+    settings put global settings_enable_monitor_phantom_procs false
+    device_config put activity_manager max_cached_processes 2147483647
+    device_config put activity_manager max_phantom_processes 2147483647
     resetprop sys.lmk.minfree_levels 1:1001,2:1001,3:1001,4:1001,5:1001,6:1001
     setZram
     setVm
