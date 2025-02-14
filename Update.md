@@ -1,16 +1,21 @@
 ## 更新日志:
 
-### 版本号：内存参数调整 2023-12-16
+### 版本号：内存参数调整 2025-02-14
 
-- 修复模块Bug。
-- 调整模块参数。
+- 优化代码
+- 更新AppRetetion模块版本
+- 去除关闭内存扩展功能
+- 增加优先选择zstd压缩模式
 
 - #Author by @焕晨HChen
 
 ## Update:
 
-### Version: MiniHChen v.2023.12.16
+### Version: MiniHChen v.2025-02-14
 
-- Fix module bugs.
-- Adjust the module parameters.
+- Opt code
+- Update the AppRetetion module version
+- Remove the memory extension function
+- Add priority to zstd compression mode
+
 - #Author by @焕晨HChen
