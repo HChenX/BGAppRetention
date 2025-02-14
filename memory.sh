@@ -113,14 +113,30 @@ setVm() {
 
         # 设置其它vm参数
         echo "- [i]:设置其它vm参数"
+        # 杀死触发oom的那个进程
         setValue 1 /proc/sys/vm/oom_kill_allocating_task
+        # 是否打印 oom日志
         setValue 0 /proc/sys/vm/oom_dump_tasks
+        # 是否要允许压缩匿名页
         setValue 1 /proc/sys/vm/compact_unevictable_allowed
+        # io调试开关
         setValue 0 /proc/sys/vm/block_dump
+        # vm 状态更新频率
         setValue 5 /proc/sys/vm/stat_interval
+        # 是否允许过量使用运存
+        #  setValue 200 /proc/sys/vm/overcommit_ratio
         setValue 1 /proc/sys/vm/overcommit_memory
+        # 触发oom后怎么抛异常
         setValue 0 /proc/sys/vm/panic_on_oom
+        # 此参数决定了内核在后台应该压缩内存的力度。参数取 [0, 100] 范围内的值
+        # 默认20，待测试
         setValue 35 /proc/sys/vm/compaction_proactiveness
+        #  压缩内存节省空间（会导致kswap0异常）
+        #  setValue 1 /proc/sys/vm/compact_memory
+        #  watermark_boost_factor用于优化内存外碎片化
+        #  setValue 100 /proc/sys/vm/watermark_boost_factor
+        #  参数越小越倾向于进行内存规整，越大越不容易进行内存规整。
+        #  setValue 400 /proc/sys/vm/extfrag_threshold
 
         # 每次换入的内存页
         {
