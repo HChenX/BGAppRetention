@@ -1,7 +1,7 @@
-# Author by @焕晨HChen
-HChen=${0%/*}
+# Author: 焕晨HChen
+PATH=${0%/*}
 
-Wait_until_login() {
+waitSystemBootCompleted() {
     while [[ "$(getprop sys.boot_completed)" != "1" ]]; do
         sleep 1
     done
@@ -10,17 +10,17 @@ Wait_until_login() {
     done
 }
 
-Main() {
-    Wait_until_login
+main() {
+    waitSystemBootCompleted
 
     if [[ -f /system/bin/sh ]]; then
-        /system/bin/sh "$HChen/memory.sh"
+        /system/bin/sh "$PATH/memory.sh"
     elif [[ -f /vendor/bin/sh ]]; then
-        /vendor/bin/sh "$HChen/memory.sh"
+        /vendor/bin/sh "$PATH/memory.sh"
     else
-        echo "不存在 sh 文件，无法正常执行" >"$HChen"/log.txt
+        echo "不存在 sh 文件，无法正常执行" >"$PATH"/log.txt
         exit 1
     fi
 }
 
-Main
+main
