@@ -1,5 +1,5 @@
 # Author: 焕晨HChen
-mSwapConfig="$MODPATH/swap.ini"
+mSwapConfig="$(findPath MemoryOpt)/swap.ini"
 mShouldRemoveModuleNames="
 zram_huanchen
 HChen_Zram
@@ -148,7 +148,9 @@ findPath() {
 }
 
 getConfigValue() {
-    grep -v '^#' <"$mSwapConfig" | grep "^$1=" | cut -f2 -d '='
+    if [[ -f $mSwapConfig ]]; then
+        grep -v '^#' <"$mSwapConfig" | grep "^$1=" | cut -f2 -d '='
+    fi
 }
 
 volumeKeyListener() {
