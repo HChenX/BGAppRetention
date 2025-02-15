@@ -28,7 +28,8 @@
 
 - 主Magisk模块内容。
 - 附加Lsp模块`AppRetentionHook`。
-- #### 注：附加模块作者：`焕晨HChen`，模块详细内容请查看：[AppRetentionHook](https://github.com/HChenX/AppRetentionHook)。
+- #### 注：附加模块作者：
+  `焕晨HChen`，模块详细内容请查看：[AppRetentionHook](https://github.com/HChenX/AppRetentionHook)。
 
 ### 🔥模块效果：
 

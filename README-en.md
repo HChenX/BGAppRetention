@@ -28,16 +28,19 @@
 
 - Main Magisk module content.
 - Additional Lsp module: `AppRetentionHook`.
-- #### Note: Additional module author: `焕晨HChen`, For detailed module content, please refer to: [AppRetentionHook](https://github.com/HChenX/AppRetentionHook)。
+- #### Note: Additional module author:
+  `焕晨HChen`, For detailed module content, please refer to: [AppRetentionHook](https://github.com/HChenX/AppRetentionHook)。
 
 ### 🔥Module Effects:
 
 - Combined with the Lsp module 'App Retention', it can play a better role.
 
 * The module has been modified and set up in a radical way, including but not limited to:
-    * 1.The ZRAM size is set to about 1.5 times the size of the physical memory, and the module cannot be freely
+    * 1.The ZRAM size is set to about 1.5 times the size of the physical memory, and the module
+      cannot be freely
       modified.
-    * 2.The module also has some changes to other aspects, such as: VM parameters, LMK parameters, etc.
+    * 2.The module also has some changes to other aspects, such as: VM parameters, LMK parameters,
+      etc.
 
 # 👑Module Author Information:
 
@@ -57,9 +60,11 @@
 
 ### 💕Acknowledgement Statement:
 
-- Thank you all for your support. Without your support, it would not have been possible to go this far. Thank you
+- Thank you all for your support. Without your support, it would not have been possible to go this
+  far. Thank you
   very much!
-- This module code may have borrowed some code from other modules. If there is any infringement, please contact me to
+- This module code may have borrowed some code from other modules. If there is any infringement,
+  please contact me to
   delete it.
 
 ### 🎵Friendly Link:
