@@ -1,5 +1,4 @@
 # Author: 焕晨HChen
-mSwapConfig="$(findPath MemoryOpt)/swap.ini"
 mShouldRemoveModuleNames="
 zram_huanchen
 HChen_Zram
@@ -7,9 +6,6 @@ MiniHChen
 swap_controller
 scene_swap_controller
 "
-
-mCompAlgorithm=$(getConfigValue algorithm)
-mPersist=$(getConfigValue persist)
 
 main() {
     print "- [i]: 欢迎使用本模块 (///ω///)"
@@ -73,9 +69,12 @@ installAppRetentionIfNeed() {
 
 # 设置压缩模式
 initConfig() {
+    compAlgorithm=$(getConfigValue algorithm)
+    persist=$(getConfigValue persist)
+
     printLog "- [i]: 正在检测可用压缩模式！"
-    if [[ $mPersist == "true" ]]; then
-        algorithm=$mCompAlgorithm
+    if [[ $persist == "true" ]]; then
+        algorithm=$compAlgorithm
     else
         result=$(cat /sys/block/zram0/comp_algorithm)
         zramModes=$(echo "$result" | sed 's/\[//g' | sed 's/]//g' | sed 's/ /\n/g')
@@ -94,7 +93,7 @@ initConfig() {
         printLog "- [!]: 获取zram压缩模式失败！"
         exit 1
     else
-        sed -i '2a '"algorithm=$algorithm"'' "$mSwapConfig"
+        sed -i '2a '"algorithm=$algorithm"'' "$MODPATH/swap.ini"
         printLog "- [i]: 设置 zram 压缩算法为: $algorithm"
     fi
 
@@ -148,8 +147,8 @@ findPath() {
 }
 
 getConfigValue() {
-    if [[ -f $mSwapConfig ]]; then
-        grep -v '^#' <"$mSwapConfig" | grep "^$1=" | cut -f2 -d '='
+    if [[ -f "/data/adb/modules/MemoryOpt/swap.ini" ]]; then
+        grep -v '^#' <"/data/adb/modules/MemoryOpt/swap.ini" | grep "^$1=" | cut -f2 -d '='
     fi
 }
 
