@@ -75,6 +75,8 @@ initConfig() {
     printLog "- [i]: 正在检测可用压缩模式！"
     if [[ $persist == "true" ]]; then
         algorithm=$compAlgorithm
+        sed -i '6d' "$MODPATH/swap.ini"
+        sed -i '5a '"persist=true"'' "$MODPATH/swap.ini"
     else
         result=$(cat /sys/block/zram0/comp_algorithm)
         zramModes=$(echo "$result" | sed 's/\[//g' | sed 's/]//g' | sed 's/ /\n/g')
