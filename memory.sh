@@ -24,10 +24,10 @@ main() {
         echo "开机时间: $time"
         version=$(dumpsys package com.hchen.appretention | grep versionName | cut -f2 -d '=')
         if [[ -n $version ]]; then
-            echo "AppRetention 已经安装: $version"
+            echo "AppRetention: $version"
         else
-            echo "AppRetention 未安装!"
-            echo "AppRetention 下载地址: https://github.com/HChenX/AppRetentionHook"
+            echo "AppRetention: 未安装!"
+            echo "AppRetention: 下载地址: https://github.com/HChenX/AppRetentionHook"
         fi
         echo "###############################################"
         echo ""
@@ -79,13 +79,22 @@ initZram() {
     fi
     echo "- [i]: 内核支持 ZRAM！"
 
+    backing_dev=$(cat /sys/block/zram0/backing_dev)
+    echo "- [i]: 获取正在使用的回写块地址: $backing_dev"
     echo "- [i]: 重置ZRAM！"
     for z in /dev/block/zram*; do
         swapoff "$z" &>/dev/null
     done
     setValue 1 /sys/block/zram0/reset
 
-    zramSize=$(expr $(expr $(grep 'MemTotal' </proc/meminfo | tr -cd "0-9") / 1048576) + 5)
+    if [[ $backing_dev != "none" ]]; then
+        echo "- [i]: 恢复回写块地址！"
+        setValue "$backing_dev" /sys/block/zram0/backing_dev
+    fi
+    setValue 0 /sys/block/zram0/writeback_limit_enable
+
+    echo "- [i]: 设置 ZRAM 大小！"
+    zramSize=$(expr $(expr $(grep 'MemTotal' </proc/meminfo | tr -cd "0-9") / 1048576) + 1)
     setValue "$zramSize"G /sys/block/zram0/disksize
 
     echo "- [i]: 设置压缩模式: $algorithm"
