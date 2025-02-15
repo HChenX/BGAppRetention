@@ -1,6 +1,6 @@
-id=MiniHChen
-name=内存参数调整
-version=2024.02.22
-versionCode=2024022200
+id=MemoryOpt
+name=内存优化
+version=2025.02.15
+versionCode=2025021500
 author=焕晨HChen
 description=内存参数调整，以实现更佳的内存使用效率。
