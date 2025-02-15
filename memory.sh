@@ -87,7 +87,7 @@ initZram() {
     done
     setValue 1 /sys/block/zram0/reset
 
-    if [[ $backing_dev != "none" ]]; then
+    if [[ $backing_dev != "" && $backing_dev != "none" ]]; then
         echo "- [i]: 恢复回写块地址！"
         setValue "$backing_dev" /sys/block/zram0/backing_dev
     fi
