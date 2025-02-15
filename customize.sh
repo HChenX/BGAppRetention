@@ -39,7 +39,7 @@ removeModuleIfNeed() {
 
 # AppRetention 模块安装
 installAppRetentionIfNeed() {
-    printLog "- [i]: AppRetention 模块，版本 v.5.2.1"
+    printLog "- [i]: AppRetention 模块，版本 v.5.2.2"
     printLog "- [i]: 模块作用: 通过 Hook 系统 kill 逻辑实现后台保活"
     printLog "- [i]: 模块作者: 焕晨HChen"
     versionName=$(dumpsys package com.hchen.appretention | grep versionName | cut -f2 -d '=')

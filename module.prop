@@ -1,7 +1,7 @@
 id=MemoryOpt
 name=内存优化
 version=2025.02.15
-versionCode=2025021506
+versionCode=2025021507
 author=焕晨HChen
 description=内存参数调整，以实现更佳的内存使用效率。
 updateJson=https://raw.githubusercontent.com/HChenX/MemoryOpt/main/HChen.json
