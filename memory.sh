@@ -1,17 +1,50 @@
 # Author: 焕晨HChen
-PATH=${0%/*}
-mSwapConfig="$PATH/swap.ini"
+MODDIR=${0%/*}
+mSwapConfig="$MODDIR/swap.ini"
 
-# 检查并导入文件
-if [[ -f $mSwapConfig ]]; then
-    if . "$mSwapConfig"; then
-        echo "- [i]: 配置文件读取成功！"
-    else
-        echo "- [!]: 配置文件读取异常!" && exit 1
-    fi
-else
-    echo "- [!]: 缺少 $mSwapConfig 文件！" && exit 1
-fi
+main() {
+    {
+        echo "###############################################"
+        time=$(date "+%Y年%m月%d日_%H时%M分%S秒")
+        echo "手机品牌: $(getprop ro.product.brand)"
+        echo "手机型号: $(getprop ro.product.device)"
+        echo "上市名称: $(getprop ro.product.marketname)"
+        echo "安卓版本: $(getprop ro.build.version.release)"
+        echo "内存大小: $(expr $(expr $(grep 'MemTotal' </proc/meminfo | tr -cd "0-9") / 1048576) + 1)"
+        echo "内核版本: $(uname -r)"
+        if [[ -n $(getprop ro.miui.ui.version.name) ]]; then
+            if [[ $(getprop ro.miui.ui.version.name) == "V816" ]]; then
+                echo "Hyper 版本: $(getprop ro.product.build.version.incremental)"
+            else
+                echo "MIUI 版本: MIUI $(getprop ro.miui.ui.version.name) - $(getprop ro.build.version.incremental)"
+            fi
+        else
+            echo "系统版本: $(getprop ro.product.build.version.incremental)"
+        fi
+        echo "开机时间: $time"
+        version=$(dumpsys package com.hchen.appretention | grep versionName | cut -f2 -d '=')
+        if [[ -n $version ]]; then
+            echo "AppRetention 已经安装: $version"
+        else
+            echo "AppRetention 未安装!"
+            echo "AppRetention 下载地址: https://github.com/HChenX/AppRetentionHook"
+        fi
+        echo "###############################################"
+        echo ""
+        # 检查并导入文件
+        if [[ -f $mSwapConfig ]]; then
+            if . "$mSwapConfig"; then
+                echo "- [i]: 配置文件读取成功！"
+            else
+                echo "- [!]: 配置文件读取异常!" && exit 1
+            fi
+        else
+            echo "- [!]: 缺少 $mSwapConfig 文件！" && exit 1
+        fi
+        initZram
+        initVm
+    } >>"$MODDIR"/log.txt
+}
 
 # 输出日志
 printLog() {
@@ -46,14 +79,13 @@ initZram() {
     fi
     echo "- [i]: 内核支持 ZRAM！"
 
-    echo "- [i]:重置ZRAM！"
+    echo "- [i]: 重置ZRAM！"
     for z in /dev/block/zram*; do
         swapoff "$z" &>/dev/null
     done
     setValue 1 /sys/block/zram0/reset
 
     zramSize=$(expr $(expr $(grep 'MemTotal' </proc/meminfo | tr -cd "0-9") / 1048576) + 5)
-    echo "- [i]: 设置 ZRAM 大小: $zramSize GB"
     setValue "$zramSize"G /sys/block/zram0/disksize
 
     echo "- [i]: 设置压缩模式: $algorithm"
@@ -67,17 +99,16 @@ initZram() {
 }
 
 initVm() {
+    # 设置 vm 参数
+    echo "- [i]: 设置 vm 参数优化！"
+
     echo "160" >"/proc/sys/vm/swappiness"
     if [[ $? -eq 1 ]]; then
         swappiness=95
     else
         swappiness=160
     fi
-    echo "- [i]: 设置 Swappiness 为: $swappiness"
     setValue "$swappiness" "/proc/sys/vm/swappiness"
-
-    # 设置 vm 参数
-    echo "- [i]: 设置 vm 参数优化！"
     setValue 10 /proc/sys/vm/dirty_background_ratio
     setValue 20 /proc/sys/vm/dirty_ratio
     setValue 1500 /proc/sys/vm/dirty_expire_centisecs   # k80p 3000
@@ -107,39 +138,6 @@ initVm() {
         # k80p 3
         setValue 1 /proc/sys/vm/page-cluster
     fi
-}
-
-main() {
-    {
-        time=$(date "+%Y年%m月%d日_%H时%M分%S秒")
-        echo "手机品牌: $(getprop ro.product.brand)"
-        echo "手机型号: $(getprop ro.product.device)"
-        echo "上市名称: $(getprop ro.product.marketname)"
-        echo "安卓版本: $(getprop ro.build.version.release)"
-        echo "内存大小: $(expr $(expr $(grep 'MemTotal' </proc/meminfo | tr -cd "0-9") / 1048576) + 1)"
-        echo "内核版本: $(uname -r)"
-        if [[ -n $(getprop ro.miui.ui.version.name) ]]; then
-            if [[ $(getprop ro.miui.ui.version.name) == "V816" ]]; then
-                echo "Hyper 版本: $(getprop ro.product.build.version.incremental)"
-            else
-                echo "MIUI 版本: MIUI $(getprop ro.miui.ui.version.name) - $(getprop ro.build.version.incremental)"
-            fi
-        else
-            echo "系统版本: $(getprop ro.product.build.version.incremental)"
-        fi
-        echo "开机时间: $time"
-        version=$(dumpsys package com.hchen.appretention | grep versionName | cut -f2 -d '=')
-        if [[ -n $version ]]; then
-            echo "AppRetention 已经安装: $version"
-        else
-            echo "AppRetention 未安装!"
-            echo "AppRetention 下载地址: https://github.com/HChenX/AppRetentionHook"
-        fi
-        echo "---------------------------------------------------------------------------"
-        initZram
-        initVm
-        echo "---------------------------------------------------------------------------"
-    } >>"$PATH"/log.txt
 }
 
 main

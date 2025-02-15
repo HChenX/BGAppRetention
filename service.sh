@@ -1,5 +1,5 @@
 # Author: 焕晨HChen
-PATH=${0%/*}
+MODDIR=${0%/*}
 
 waitSystemBootCompleted() {
     while [[ "$(getprop sys.boot_completed)" != "1" ]]; do
@@ -13,13 +13,13 @@ waitSystemBootCompleted() {
 main() {
     waitSystemBootCompleted
 
-    echo "" >"$PATH"/log.txt # 重置日志
+    echo -n "" >"$MODDIR"/log.txt # 重置日志
     if [[ -f /system/bin/sh ]]; then
-        /system/bin/sh "$PATH/memory.sh"
+        /system/bin/sh "$MODDIR/memory.sh"
     elif [[ -f /vendor/bin/sh ]]; then
-        /vendor/bin/sh "$PATH/memory.sh"
+        /vendor/bin/sh "$MODDIR/memory.sh"
     else
-        echo "- [!]: 不存在 sh 文件，无法正常执行" >"$PATH"/log.txt
+        echo "- [!]: 不存在 sh 文件，无法正常执行" >"$MODDIR"/log.txt
         exit 1
     fi
 }

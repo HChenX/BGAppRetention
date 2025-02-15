@@ -46,8 +46,9 @@ installAppRetentionIfNeed() {
     printLog "- [i]: AppRetention 模块，版本 v.5.2.1"
     printLog "- [i]: 模块作用: 通过 Hook 系统 kill 逻辑实现后台保活"
     printLog "- [i]: 模块作者: 焕晨HChen"
-    version=$(dumpsys package com.hchen.appretention | grep versionName | cut -f2 -d '=')
-    if [[ $version == "5.2.1" ]]; then
+    versionName=$(dumpsys package com.hchen.appretention | grep versionName | cut -f2 -d '=')
+    versionCode=$(dumpsys package com.hchen.appretention | grep versionCode | cut -f2 -d '=' | cut -f1 -d ' ')
+    if [[ $versionName == "5.2.1" && $versionCode == "2025021401" ]]; then
         printLog "- [i]: AppRetention 模块已经安装且最新!"
         rm -rf "$MODPATH"/AppRetention.apk
     else
