@@ -22,9 +22,8 @@ main() {
     initConfig
     initPermissions
 
-    printLog "- [i]:群：517788148"
-    printLog "- [i]:作者：@焕晨HChen"
-    printLog "- [i]:安装完成！All Down!"
+    printLog "- [i]: 作者: 焕晨HChen"
+    printLog "- [i]: 安装完成！All Down!"
 }
 
 # 删除冲突文件

@@ -13,12 +13,13 @@ waitSystemBootCompleted() {
 main() {
     waitSystemBootCompleted
 
+    echo "" >"$PATH"/log.txt # 重置日志
     if [[ -f /system/bin/sh ]]; then
         /system/bin/sh "$PATH/memory.sh"
     elif [[ -f /vendor/bin/sh ]]; then
         /vendor/bin/sh "$PATH/memory.sh"
     else
-        echo "不存在 sh 文件，无法正常执行" >"$PATH"/log.txt
+        echo "- [!]: 不存在 sh 文件，无法正常执行" >"$PATH"/log.txt
         exit 1
     fi
 }
