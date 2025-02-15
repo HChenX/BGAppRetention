@@ -44,7 +44,7 @@ installAppRetentionIfNeed() {
     printLog "- [i]: 模块作者: 焕晨HChen"
     versionName=$(dumpsys package com.hchen.appretention | grep versionName | cut -f2 -d '=')
     versionCode=$(dumpsys package com.hchen.appretention | grep versionCode | cut -f2 -d '=' | cut -f1 -d ' ')
-    if [[ $versionName == "5.2.1" && $versionCode == "2025021401" ]]; then
+    if [[ $versionName == "5.2.2" && $versionCode == "2025021500" ]]; then
         printLog "- [i]: AppRetention 模块已经安装且最新!"
         rm -rf "$MODPATH"/AppRetention.apk
     else
