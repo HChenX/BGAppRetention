@@ -1,11 +1,14 @@
 ro.lmk.low=1001
 ro.lmk.medium=1001
 ro.lmk.critical=1001
+ro.lmk.critical_upgrade=false
+ro.lmk.upgrade_pressure=100
+ro.lmk.downgrade_pressure=100
 ro.lmk.swap_util_max=100
 ro.lmk.thrashing_limit=100
-ro.lmk.thrashing_limit_decay=10
-ro.lmk.psi_partial_stall_ms=300
-ro.lmk.psi_complete_stall_ms=800
+ro.lmk.thrashing_limit_decay=20
+ro.lmk.psi_partial_stall_ms=200
+ro.lmk.psi_complete_stall_ms=700
 ro.lmk.swap_free_low_percentage=1
 ro.lmk.kill_heaviest_task=false
 ro.lmk.swap_is_low_kill_enable=0
