@@ -1,5 +1,5 @@
 <div align="center">
-<h1>Memory optimize module</h1>
+<h1>MemoryOpt</h1>
 
 ![stars](https://img.shields.io/github/stars/HChenX/BGAppRetention?style=flat)
 ![downloads](https://img.shields.io/github/downloads/HChenX/BGAppRetention/total)
@@ -10,74 +10,61 @@
 ![language](https://img.shields.io/badge/language-shell-purple)
 
 <p><b><a href="README.md">简体中文</a> | <a href="README-en.md">English</a> </b></p>
-<p>This module is dedicated to the Lsp module 'App Retention' that assists me in another project.</p>
+<p>Optimize and adjust memory parameters</p>
 </div>
 
-# ✨Module Introduction:
+# ✨introduction to memory parameter module:
 
-### 💡Module Source:
+### 💡Module source:
 
-- Module Author `@焕晨HChen`。
+- Module author: `焕晨HChen`。
 
-### 🌟Module Principle:
+### 🌟Module principle:
 
-- The module assists the Lsp module 'App Retention' by adjusting the memory parameters.
-- Use shell commands to modify the zarm size, vm parameters, and lmk parameters.
+- Modules achieve more efficient memory usage by adjusting memory parameters.
+- Use shell commands and other methods to modify zarm size, vm parameters, lmk parameters, etc.
 
-### 💫Module Have:
+### 💫The module contains content:
 
-- Main Magisk module content.
-- Additional Lsp module: `AppRetentionHook`.
-- #### Note: Additional module author:
-  `焕晨HChen`, For detailed module content, please refer to: [AppRetentionHook](https://github.com/HChenX/AppRetentionHook)。
+- Memory parameter modification and optimization.
+- Additional Lsp module `AppRetentionHook`。
+- #### Note: Additional Module Author:
+  `焕晨HChen`，For detailed module content, please refer to: [AppRetentionHook](https://github.com/HChenX/AppRetentionHook)。
 
-### 🔥Module Effects:
+### 🔥Module effect：
 
-- Combined with the Lsp module 'App Retention', it can play a better role.
+- Optimize and improve memory usage efficiency.
+- It is recommended to cooperate with the Lsp module `AppRetention` to achieve better results.
 
-* The module has been modified and set up in a radical way, including but not limited to:
-    * 1.The ZRAM size is set to about 1.5 times the size of the physical memory, and the module
-      cannot be freely
-      modified.
-    * 2.The module also has some changes to other aspects, such as: VM parameters, LMK parameters,
-      etc.
+# 👑Module author information:
 
-# 👑Module Author Information:
+### ⭐Module author:
 
-### ⭐Module Author:
-
-|      Module Author:      | Module Author Name |
+|      Module author       | Module author name |
 |:------------------------:|:------------------:|
-|  Author of this module   |      焕晨HChen       |
+|      Module author       |      焕晨HChen       |
 | Additional Module Author |      焕晨HChen       |
-
-### 🌹Acknowledgments List:
-
-- NewBing
-- ChatGpt
 
 ## 🎉Conclusion:
 
 ### 💕Acknowledgement Statement:
 
-- Thank you all for your support. Without your support, it would not have been possible to go this
-  far. Thank you
-  very much!
+- Thank you all for your support. Without your support module, we would not have been able to get to
+  where we are now. Thank you very much!
 - This module code may have borrowed some code from other modules. If there is any infringement,
-  please contact me to
-  delete it.
+  please contact me to delete it.
 
-### 🎵Friendly Link:
+### 🎵Friendship link:
 
-- AppRetentionHook Module GitHub Link:
+- Github link for AppRetantionBook module:
 - [AppRetentionHook](https://github.com/HChenX/AppRetentionHook)
 
-### 📢Communication Group:
+### 📢焕晨's communication group:
 
-- QQ group:517788148
-- Telegram:[Telegram](https://t.me/HChen_AppRetention)
+- Telegram Communication Group: [Telegram](https://t.me/HChenX_Chat)
+- Telegram module distribution group: [Telegram](https://t.me/HChenX_Module)
 
-### 💣Disclaimer:
+### 💣Disclaimers:
 
-> If you use this module, you are agreeing to accept all consequences.
-> This project holds no responsibility for any projects derived from it.
+- Module flashing represents willingness to bear all consequences on one's own.
+- Please make your own judgment on whether to install the brush in!

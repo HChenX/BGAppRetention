@@ -4,3 +4,4 @@ version=2025.02.15
 versionCode=2025021500
 author=焕晨HChen
 description=内存参数调整，以实现更佳的内存使用效率。
+updateJson=https://raw.githubusercontent.com/HChenX/MemoryOpt/main/HChen.json
