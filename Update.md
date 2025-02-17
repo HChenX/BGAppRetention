@@ -1,6 +1,6 @@
 ## 更新日志:
 
-### 版本号：内存优化 2025-02-15
+### 版本号：内存优化 2025-02-17
 
 - 重构模块代码，更加简洁易懂。
 - 更改模块包名为 `MemoryOpt`。
@@ -13,7 +13,7 @@
 
 ## Update Info:
 
-### Version: MemoryOpt v.2025-02-15
+### Version: MemoryOpt v.2025-02-17
 
 - Refactoring module code to make it more concise and easy to understand.
 - Change the module package name to 'MemoryOpt'.
