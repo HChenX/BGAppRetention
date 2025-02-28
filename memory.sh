@@ -97,7 +97,7 @@ initZram() {
     setValue $algorithm /sys/class/block/zram0/comp_algorithm
 
     echo "- [i]: 设置 ZRAM 大小！"
-    zramSize=$(expr $(expr $(grep 'MemTotal' </proc/meminfo | tr -cd "0-9") / 1048576) + 1)
+    zramSize=$(expr $(expr $(grep 'MemTotal' </proc/meminfo | tr -cd "0-9") / 1048576) + 2)
     setValue "$zramSize"G /sys/block/zram0/disksize
 
     echo "- [i]: 初始化 ZRAM！"
